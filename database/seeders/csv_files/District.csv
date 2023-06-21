@@ -1,0 +1,188 @@
+LgaId,LgaName,LgaCode,RegionCode
+2,Arusha City Council,25511,2551
+3,Arusha District Council,25512,2551
+4,Babati,25561,2556
+5,Babati District Council,25562,2556
+6,Bagamoyo District Council,25731,2573
+7,Bahi District Council,25531,2553
+8,Bariadi,25621,2562
+9,Bariadi Town Council,25622,2562
+10,Biharamulo District Council,25601,2560
+11,Buchosa District Council,25591,2559
+12,Buhigwe District Council,25651,2565
+13,Bukoba District Council,25602,2560
+14,Bukoba Municipal Council,25603,2560
+15,Bukombe District Council,25571,2557
+16,Bumbuli District Council,25541,2554
+17,Bunda District Council,25581,2558
+18,Bunda Town Council,25582,2558
+19,Busega District Council,25623,2562
+20,Busokelo District Council,25681,2568
+21,Butiama District Council,25583,2558
+22,Chalinze District Council,25732,2573
+23,Chamwino District Council,25532,2553
+24,Chato District Council,25572,2557
+25,Chemba District Council,25533,2553
+26,Chunya District Council,25682,2568
+27,Dar es Salaam City  Council,25521,2552
+28,Dodoma Municipal Council,25534,2553
+29,DSM Rapid Transport  Programme,25522,2552
+30,Gairo District Council,25761,2576
+31,Geita District Council,25573,2557
+32,Geita Town Council,25574,2557
+33,Hai District Council,25551,2555
+34,Hanang District Council,25563,2556
+35,Handeni District Council,25542,2554
+36,Handeni Town Council,25543,2554
+37,Ifakara Town Council,25762,2576
+38,Igunga District Council,25641,2564
+39,Ikungi District Council,25631,2563
+40,Ilala Municipal Council,25523,2552
+41,Ileje District Council,25691,2569
+42,Ilemela Munispal Council,25592,2559
+43,Iramba District Council,25632,2563
+44,Iringa District Council,25671,2567
+45,Iringa Municipal Council,25672,2567
+46,Itigi District Council,25633,2563
+47,Itilima District Council,25624,2562
+48,Kahama Town Council,25611,2561
+49,Kakonko District Council,25652,2565
+50,Kalambo District Council,25701,2570
+51,Kaliua District Council,25642,2564
+52,Karagwe District Council,25604,2560
+53,Karatu District Council,25513,2551
+54,Kariakoo Masoko,25524,2552
+55,Kasulu District Council,25653,2565
+56,Kasulu Town Council,25654,2565
+57,Kibaha District Council,25733,2573
+58,Kibaha Town Council,25734,2573
+59,Kibiti District Council,25735,2573
+60,Kibondo District Council,25655,2565
+61,Kigamboni Municipal Council,25525,2552
+62,Kigoma District Council,25656,2565
+63,Kigoma Ujiji Municipal Council,25657,2565
+64,Kilindi District Council,25544,2554
+65,Kilolo District Council,25673,2567
+66,Kilombero District Council,25763,2576
+67,Kilosa District Council,25764,2576
+68,Kilwa District Council,25751,2575
+69,Kinondoni Municipal Council,25526,2552
+70,Kisarawe District Council,25736,2573
+71,Kishapu District Council,25612,2561
+72,Kiteto District Council,25564,2556
+73,Kondoa District Council,25535,2553
+74,Kondoa Town Council,25536,2553
+75,Kongwa District Council,25537,2553
+76,Korogwe,25545,2554
+77,Korogwe District Council,25546,2554
+78,Kwimba District Council,25593,2559
+79,Kyela District Council,25683,2568
+80,Kyerwa District Council,25605,2560
+81,Lindi District Council,25752,2575
+82,Lindi Municipal Council,25753,2575
+83,Liwale District Council,25754,2575
+84,Longido District Council,25514,2551
+85,Ludewa District Council,25721,2572
+86,Lushoto District Council,25547,2554
+87,Madaba District Council,25711,2571
+88,Mafia District Council,25737,2573
+89,Mafinga Town Council,25674,2567
+90,Magu District Council,25594,2559
+91,Makambako Town Council,25722,2572
+92,Makete District Council,25723,2572
+93,Malinyi District Council,25765,2576
+94,Masasi District Council,25741,2574
+95,Masasi Town Council,25742,2574
+96,Maswa District Council,25625,2562
+97,Mbarali District Council,25684,2568
+98,Mbeya City Council,25685,2568
+99,Mbeya District Council,25686,2568
+100,Mbinga District Council,25712,2571
+101,Mbinga Town Council,25713,2571
+102,Mbogwe District Council,25575,2557
+103,Mbozi District Council,25692,2569
+104,Mbulu District Council,25565,2556
+105,Mbulu Town Council,25566,2556
+106,Meatu District Council,25626,2562
+107,Meru District Council,25515,2551
+108,Misenyi District Council,25606,2560
+109,Misungwi District Council,25595,2559
+110,Mkalama District Council,25634,2563
+111,Mkinga District Council,25548,2554
+112,Mkuranga,25738,2573
+113,Mlele District Council,25661,2566
+114,Momba District Council,25693,2569
+115,Monduli District Council,25516,2551
+116,Morogoro District,25766,2576
+117,Morogoro Municipal Council,25767,2576
+118,Moshi District Council,25552,2555
+119,Moshi Municipal Council,25553,2555
+120,Mpanda,25662,2566
+121,Mpanda District Council,25663,2566
+122,Mpimbwe District Council,25664,2566
+123,Mpwapwa District Council,25538,2553
+124,Msalala District Council,25613,2561
+125,Mtwara District Council,25743,2574
+126,Mtwara Mikindani Municipal Council,25744,2574
+127,Mufindi District Council,25675,2567
+128,Muheza District Council,25549,2554
+129,Muleba District Council,25607,2560
+130,Musoma,25584,2558
+131,Musoma District Council,25585,2558
+132,Mvomero District Council,25768,2576
+133,Mwanga District Council,25554,2555
+134,Mwanza City Council,25596,2559
+135,Nachingwea District Council,25755,2575
+136,Namtumbo District Council,25714,2571
+137,Nanyamba Town Council,25745,2574
+138,Nanyumbu District Council,25746,2574
+139,Newala District Council,25747,2574
+140,Newala Town Council,25748,2574
+141,Ngara District Council,25608,2560
+142,Ngorongoro District Council,25517,2551
+143,Njombe,25724,2572
+144,Njombe District Council,25725,2572
+145,Nkasi District Council,25702,2570
+146,Nsimbo District Council,25665,2566
+147,Nyangwale District Council,25576,2557
+148,Nyasa,25715,2571
+149,Nzega District Council,25643,2564
+150,Nzega Town Council,25644,2564
+151,Pangani District Council,25550,2554
+152,Rombo District Council,25555,2555
+153,Rorya District Council,25586,2558
+154,Ruangwa District Council,25756,2575
+155,Rufiji District Council,25739,2573
+156,Rungwe District Council,25687,2568
+157,Same District Council,25556,2555
+158,Sengerema District Council,25597,2559
+159,Serengeti District Council,25587,2558
+160,Shinyanga,25614,2561
+161,Shinyanga District Council,25615,2561
+162,Siha District Council,25557,2555
+163,Sikonge District Council,25645,2564
+164,Simanjiro District Council,25567,2556
+165,Singida,25635,2563
+166,Singida District Council,25636,2563
+167,Songea,25716,2571
+168,Songea District Council,25717,2571
+169,Songwe District Council,25694,2569
+170,Sumbawanga,25703,2570
+171,Sumbawanga District Council,25704,2570
+172,Tabora,25646,2564
+173,Tandahimba District Council,25749,2574
+174,Tanga City Council,25551,2554
+175,Tanzania Rural and Urban Roads Agency,25539,2553
+176,Tarime District Council,25588,2558
+177,Tarime Town Council,25589,2558
+178,Temeke Municipal Council,25527,2552
+179,Tunduma Town Council,25695,2569
+180,Tunduru District Council,25718,2571
+181,Ubungo Municipal Council,25528,2552
+182,Ukerewe District Council,25598,2559
+183,Ulanga District Council,25769,2576
+184,Urambo District Council,25647,2564
+185,Ushetu District Council,25616,2561
+186,Uvinza District Council,25658,2565
+187,Uyui District Council,25648,2564
+188,Wangingombe District Council,25726,2572
