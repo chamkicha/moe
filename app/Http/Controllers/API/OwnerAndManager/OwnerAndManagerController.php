@@ -60,7 +60,7 @@ class OwnerAndManagerController extends Controller
                 return response()->json($validator->errors());
             }
             $message = '';
-            Log::inf("ID YA SHULE NI ".$request->school);
+            Log::info("ID YA SHULE NI ".$request->school);
             $school = Establishing_school::find($request->school);
             if ($school) {
                 $school->stage = 2;
@@ -160,7 +160,7 @@ class OwnerAndManagerController extends Controller
             return response()->json(['message' => $message], 200);
         } catch (\Exception $th) {
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
-            Log::info($message);
+            Log::error($message);
             return response()->json(['message' => $message], 200);
         }
     }
