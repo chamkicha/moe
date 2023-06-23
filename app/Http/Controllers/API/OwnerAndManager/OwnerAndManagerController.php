@@ -31,7 +31,7 @@ class OwnerAndManagerController extends Controller
                 'referees.*.last_name' => 'required|string',
                 'referees.*.occupation' => 'required|string',
                 'referees.*.address' => 'required|string',
-                'referees.*.email' => 'required|string|unique:referees,email',
+                'referees.*.email' => 'required|string|unique:referees,email,',
                 'referees.*.phone_number' => 'required|string',
                 'referees.*.referee_ward' => 'required|integer',
                 'owner_name' => 'required|string',
