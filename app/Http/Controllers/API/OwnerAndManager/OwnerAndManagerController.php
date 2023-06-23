@@ -31,7 +31,7 @@ class OwnerAndManagerController extends Controller
                 'referees.*.last_name' => 'required|string',
                 'referees.*.occupation' => 'required|string',
                 'referees.*.address' => 'required|string',
-                'referees.*.email' => 'required|string',
+                'referees.*.email' => 'required|string|unique:referees,email',
                 'referees.*.phone_number' => 'required|string',
                 'referees.*.referee_ward' => 'required|integer',
                 'owner_name' => 'required|string',
@@ -68,7 +68,6 @@ class OwnerAndManagerController extends Controller
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
                     $tracking_number = generateTrackingNumber($school->school_category_id);
                     if ($app) {
-
                         $owner_data = [
                             'secure_token' => Str::random(40),
                             'establishing_school_id' => $school->id,
