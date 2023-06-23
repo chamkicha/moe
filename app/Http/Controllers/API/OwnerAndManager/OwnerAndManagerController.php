@@ -60,6 +60,7 @@ class OwnerAndManagerController extends Controller
                 return response()->json($validator->errors());
             }
             $message = '';
+            Log::inf("ID YA SHULE NI ".$request->school);
             $school = Establishing_school::find($request->school);
             if ($school) {
                 $school->stage = 2;
