@@ -158,7 +158,7 @@ class OwnerAndManagerController extends Controller
             }
             Log::info($message);
             return response()->json(['message' => $message], 200);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
             Log::info($message);
             return response()->json(['message' => $message], 200);
