@@ -832,10 +832,17 @@ class schoolEstablishmentController extends Controller
     public function attachmentType($application_category): JsonResponse
     {
 
-        $attachment_types = Attachment_type::where('application_category_id', '=', $application_category)
-            ->where('status_id','=',1)
-            ->select('id', 'secure_token', 'attachment_name')
+        // $attachment_types = Attachment_type::where('application_category_id', '=', $application_category)
+        //     ->where('status_id','=',1)
+        //     ->select('id', 'secure_token', 'attachment_name')
+        //     ->get();
+
+        $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
+            ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+            ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+            ->where('attachment_types.status_id', '=', '1')
             ->get();
+            // dd($attachmentTypes);
 
         $response = ['statusCode' => 1,'attachment_types' => $attachment_types];
         return response()->json($response, 200);
@@ -870,10 +877,16 @@ class schoolEstablishmentController extends Controller
             'tracking_number' => $application->tracking_number
         ]);
 
-        $attachment_types = Attachment_type::where('application_category_id', '=', $request->input('application_category'))
-            ->where('status_id','=',1)
-            ->select('id', 'secure_token', 'attachment_name')
-            ->get();
+        // $attachment_types = Attachment_type::where('application_category_id', '=', $request->input('application_category'))
+        //     ->where('status_id','=',1)
+        //     ->select('id', 'secure_token', 'attachment_name')
+        //     ->get();
+
+        $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
+        ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+        ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+        ->where('attachment_types.status_id', '=', '1')
+        ->get();
 
         $response = ['statusCode' => 1, 'application' => $application, 'attachment_types' => $attachment_types];
 
