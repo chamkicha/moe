@@ -114,4 +114,31 @@ class Application extends Model
 
         return $this->hasOne(Maoni::class,'trackingNo','tracking_number');
     }
+
+
+
+    public function approve_staff()
+    {
+        $tracking_number = $this->tracking_number; 
+
+
+        $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
+        // dd($tracking_number);
+        if($application_check){
+
+
+        if($application_check->is_approved == 2){
+
+            return Maoni::where('maoni.trackingNo', '=', $tracking_number)
+                                     ->join('staffs','staffs.id','=','maoni.user_from')
+                                     ->select('staffs.*','maoni.coments')
+                                     ->latest('maoni.created_at')->first();
+            
+        }else{
+            return null;
+
+        }
+        }
+    }
+
 }

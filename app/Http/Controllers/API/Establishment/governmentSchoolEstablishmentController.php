@@ -10,15 +10,20 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use DB;
 
 class governmentSchoolEstablishmentController extends Controller
 {
     public function governmentEstablishment(Request $request): JsonResponse
     {
 
+        // try{
+
+        
         $validator = Validator::make($request->all(), [
             'school_name' => 'required',
-            'area' => 'required',
+            'area' => 'required|integer',
             'school_category' => 'required|integer',
             'school_sub_category' => 'required|integer',
             'language' => 'required|integer',
@@ -35,7 +40,7 @@ class governmentSchoolEstablishmentController extends Controller
             'certificate_type' => 'required|integer',
             'school_gender' => 'required|integer',
             'disabled' => 'required',
-//            'ƒ' => 'required|array',
+           //            'ƒ' => 'required|array',
             'owner_name' => 'required|string',
             'manager_name' => 'required|string',
             'is_hostel' => 'required',
@@ -135,11 +140,28 @@ class governmentSchoolEstablishmentController extends Controller
             'tracking_number' => $application->tracking_number,
         ]);
 
-        $attachment_types = Attachment_type::where('application_category_id', '=', 1)
-            ->select('id', 'secure_token', 'attachment_name')
+        // $attachment_types = Attachment_type::where('application_category_id', '=', 1)
+        //     ->select('id', 'secure_token', 'attachment_name')
+        //     ->get();
+
+        $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
+            ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+            ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+            ->where('attachment_types.status_id', '=', '1')
+            ->where('attachment_types.application_category_id', '=', '4')
+            ->where('attachment_types.registry_type_id', '=', '3')
             ->get();
+            
+
 
         $response = ['application' => $application, 'attachment_types' => $attachment_types];
         return response()->json($response, 200);
+
+    //  } catch (\Exception $th) {
+    //     // DB::rollback();
+    //     $error = $th->getMessage();
+    //     Log::error($error);
+    //     return response()->json(['message' => 'something went wrong','error' => $error], 400);
+    //  }
     }
 }

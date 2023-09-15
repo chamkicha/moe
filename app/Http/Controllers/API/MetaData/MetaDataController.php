@@ -22,6 +22,7 @@ use App\Models\Ownership_sub_type;
 use App\Models\Ownership_type;
 use App\Models\Personal_info;
 use App\Models\Region;
+use App\Models\Street;
 use App\Models\Registration_structure;
 use App\Models\Registry_type;
 use App\Models\School_category;
@@ -54,6 +55,16 @@ class MetaDataController extends Controller
         $districts = District::where('RegionCode','=',$RegionCode)->get();
 
         $response = ['districts' => $districts];
+
+        return response()->json($response,200);
+    }
+
+    public function streets($wardCode): JsonResponse
+    {
+
+        $streets = Street::where('wardCode','=',$wardCode)->get();
+
+        $response = ['streets' => $streets];
 
         return response()->json($response,200);
     }

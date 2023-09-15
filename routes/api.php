@@ -38,6 +38,7 @@ Route::controller(MetaDataController::class)->group(function (){
     Route::get('regions','regions');
     Route::get('districts/{RegionCode?}','districts');
     Route::get('wards/{LgaCode?}','wards');
+    Route::get('streets/{wardCode?}','streets');
     Route::get('identity-types','identity');
     Route::get('curricula','curricula');
     Route::get('certificate/{id?}','certificate');
@@ -79,12 +80,13 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::post('school-establishment/submit','establishSchool');
         Route::post('school-establishment/attachments','sendAttachments');
         Route::get('applications','showApplications');
+        Route::get('applicationsGvt','showApplicationsGvt');
         Route::get('applications/owner-and-manager','showOwnerAndManagerApplications');
         Route::get('applications/registration','showRegistrationApplications');
         Route::get('application/{tracking_number?}/details','showApplicationDetails');
         Route::get('application/owner-and-manager/{tracking_number?}/details','showOwnerAndManagerDetails');
         Route::get('application/school-registration/{tracking_number?}/details','showSchoolRegistrationDetails');
-        Route::get('get/attachment-type/{id?}','attachmentType');
+        Route::get('get/attachment-type/{id}/{registry_type_id}','attachmentType');
         Route::get('delete/application/{tracking_number?}','deleteApplication');
 
         Route::controller(passwordUpdateController::class)->group(function (){

@@ -19,12 +19,19 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use DB;
 
 class AuthenticationController extends Controller
 {
 
     public function register(Request $request): JsonResponse
     {
+        Log::debug($request);
+        try{
+          
+        DB::beginTransaction();
+            
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
@@ -51,11 +58,22 @@ class AuthenticationController extends Controller
         ]);
 
         $this->basic_email($user);
+        DB::commit();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()
             ->json(['statusCode' => 1, 'message' => 'Umefanikiwa kujisajili kikamilifu,tafadhali nenda kwenye barua pepe yako kuweza kuakiki', 'data' => $user, 'access_token' => $token, 'token_type' => 'Bearer',]);
+       
+        } catch (Exception $error) {
+            DB::rollback();
+            return response()->json([
+                'statusCode' => 0,
+                'message' => 'Error occurred while logging in.',
+                'error' => $error,
+            ]);
+        }
+    
     }
 
     /**

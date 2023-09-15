@@ -8,6 +8,7 @@ use App\Models\Attachment;
 use App\Models\Attachment_type;
 use App\Models\Establishing_school;
 use App\Models\Fee;
+use App\Models\Maoni;
 use App\Models\Institute_info;
 use App\Models\Personal_info;
 use App\Models\Registry_type;
@@ -25,12 +26,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class schoolEstablishmentController extends Controller
 {
     public function establishSchool(Request $request)
     {
-
+    //  try{
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
             'school_name' => 'required',
@@ -49,6 +51,8 @@ class schoolEstablishmentController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+
+        // DB::beginTransaction();
 
         $registry = Registry_type::find($request->input('registry_type'));
 
@@ -195,7 +199,16 @@ class schoolEstablishmentController extends Controller
             ];
 
             return $this->createApplicationRequest($institute_info, $applicaion_data, $establishment, $request);
+            
         }
+        // DB::commit();
+
+    //  } catch (\Exception $th) {
+    //     DB::rollback();
+    //     $error = $th->getMessage();
+    //     Log::error($error);
+    //     return response()->json(['message' => 'something went wrong','error' => $error], 200);
+    //  }
 
     }
 
@@ -211,6 +224,9 @@ class schoolEstablishmentController extends Controller
 
     public function updateEstablishingSchoolApplication(Request $request){
 
+        // try{
+
+        
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
             'school_name' => 'required',
@@ -229,6 +245,7 @@ class schoolEstablishmentController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        // DB::beginTransaction();
 
         $registry = Registry_type::find($request->input('registry_type'));
 
@@ -281,6 +298,7 @@ class schoolEstablishmentController extends Controller
             'school_phone' => $request->input('school_phone'),
             'school_email' => $request->input('school_email'),
             'area' => $request->input('area'),
+            'po_box' => $request->input('po_box'),
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
@@ -319,6 +337,7 @@ class schoolEstablishmentController extends Controller
             ];
 
             return $this->createApplicationRequest($person_info, $applicaion_data, $establishment, $request);
+            // DB::commit();
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
 
@@ -360,20 +379,20 @@ class schoolEstablishmentController extends Controller
                     'attachment_type_id' => $attachment['attachment_type'],
                 ]);
             }
+            // DB::commit();
 
             $response = ['statusCode' => 1,'message' => 'Ombi la kuanzisha shule limetumwa kikamilifu'];
             return response()->json($response, 200);
 
-//            $applicaion_data = [
-//                'secure_token' => Str::random(40),
-//                'user_id' => auth()->user()->id,
-//                'application_category_id' => $request->input('application_category'),
-//                'tracking_number' => generateTrackingNumber($request->input('school_category')),
-//                'registry_type_id' => $request->input('registry_type'),
-//            ];
 
-//            return $this->createApplicationRequest($institute_info, $applicaion_data, $establishment, $request);
         }
+
+    //  } catch (\Exception $th) {
+    //     DB::rollback();
+    //     $error = $th->getMessage();
+    //     Log::error($message);
+    //     return response()->json(['message' => 'something went wrong','error' => $error], 200);
+    //  }
     }
 
     public function sendAttachments(Request $request)
@@ -404,10 +423,11 @@ class schoolEstablishmentController extends Controller
         }
 
         $application = Application::where('applications.tracking_number', '=', $tracking_number)
-            ->join('establishing_schools', 'applications.tracking_number', '=', 'establishing_schools.tracking_number')
+            ->leftjoin('establishing_schools', 'applications.tracking_number', '=', 'establishing_schools.tracking_number')
             ->select('applications.id', 'applications.registry_type_id','applications.tracking_number', 'establishing_schools.school_name', 'establishing_schools.school_phone',)
             ->first();
-
+            
+        // dd($application);
         if ($application->registry_type_id != 3) {
 
             $date = Carbon::now()->format('Y-m-d*H:s:i');
@@ -428,39 +448,39 @@ class schoolEstablishmentController extends Controller
 
             $bill = bill($billInfo);
 
-//            Log::info($bill);
-//
-//            return json_decode(json_encode($bill), TRUE);
-//
-//            $statusCodetag = "TrxStsCode";
-//            $billIDtag = "BillId";
-//            $controlNumbertag = "PayCntrNum";
-//
-//            $codeData = getDataString($bill,$statusCodetag);
-//            $billData = getDataString($bill,$billIDtag);
-//            $controlNumberData = getDataString($bill,$controlNumbertag);
-//
-//            $codeDataXML =  toXML($codeData);
-//            $billDataXML =  toXML($billData);
-//            $controlNumberDataXML =  toXML($controlNumberData);
-//
-//            $codeDataJSON = toJSON($codeDataXML);
-//            $billDataJSON = toJSON($billDataXML);
-//            $controlNumberDataJSON = toJSON($controlNumberDataXML);
-//
-//            Log::info("codeData ".$codeData);
-//            Log::info($codeDataJSON[0]);
-//            Log::info("billData ". $billData);
-//            Log::info($billDataJSON[0]);
-//            Log::info("controlNumberData ". $controlNumberData);
-//            Log::info($controlNumberDataJSON[0]);
+                //            Log::info($bill);
+                //
+                //            return json_decode(json_encode($bill), TRUE);
+                //
+                //            $statusCodetag = "TrxStsCode";
+                //            $billIDtag = "BillId";
+                //            $controlNumbertag = "PayCntrNum";
+                //
+                //            $codeData = getDataString($bill,$statusCodetag);
+                //            $billData = getDataString($bill,$billIDtag);
+                //            $controlNumberData = getDataString($bill,$controlNumbertag);
+                //
+                //            $codeDataXML =  toXML($codeData);
+                //            $billDataXML =  toXML($billData);
+                //            $controlNumberDataXML =  toXML($controlNumberData);
+                //
+                //            $codeDataJSON = toJSON($codeDataXML);
+                //            $billDataJSON = toJSON($billDataXML);
+                //            $controlNumberDataJSON = toJSON($controlNumberDataXML);
+                //
+                //            Log::info("codeData ".$codeData);
+                //            Log::info($codeDataJSON[0]);
+                //            Log::info("billData ". $billData);
+                //            Log::info($billDataJSON[0]);
+                //            Log::info("controlNumberData ". $controlNumberData);
+                //            Log::info($controlNumberDataJSON[0]);
 
-//            if ($codeDataJSON[0] != 7101) {
-//
-//                Log::debug($bill);
-//                $response = ['message' => 'Ooooop!, kuna tatizo la mtandao wa malipo, lakin ombi lako limetumwa kikamilifu'];
-//                return response()->json($response, 200);
-//            }
+                //            if ($codeDataJSON[0] != 7101) {
+                //
+                //                Log::debug($bill);
+                //                $response = ['message' => 'Ooooop!, kuna tatizo la mtandao wa malipo, lakin ombi lako limetumwa kikamilifu'];
+                //                return response()->json($response, 200);
+                //            }
 
                     Application::find($application->id)->update([
                         'control_number' => controlNumber(),
@@ -477,6 +497,53 @@ class schoolEstablishmentController extends Controller
         }
 
         $response = ['statusCode' => 1,'message' => 'Ombi la kuanzisha shule limetumwa kikamilifu'];
+        return response()->json($response, 200);
+    }
+
+    public function showApplicationsGvt(): JsonResponse
+    {
+
+        $applications = Application::with([
+            'personal' => function ($query) {
+                $query->select('id', 'secure_token', 'first_name', 'middle_name', 'last_name', 'occupation', 'personal_email', 'personal_phone_number', 'identity_type_id', 'personal_id_number', 'personal_address')
+                    ->with([
+                        'identity_type' => function ($query) {
+                            $query->select('id', 'id_type');
+                        }
+                    ]);
+            },
+            'institute' => function ($query) {
+                $query->select('id', 'secure_token', 'name', 'registration_number', 'institute_email', 'institute_phone', 'box', 'registration_certificate_copy', 'organizational_constitution', 'agreement_document', 'institute_address', 'ward_id')
+                    ->with([
+                        'ward.district.region'
+                    ]);
+            },
+            'category' => function ($query) {
+                $query->select('id', 'secure_token', 'app_name');
+            },
+            'applicant_type' => function ($query) {
+                $query->select('id', 'registry');
+            },
+            'establishing' => function ($query) {
+                $query->select('id', 'secure_token', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio');
+            },
+            'payment_status' => function($query){
+                $query->select('id','status_code','status');
+            }
+        ])
+            ->where('application_category_id', '=', 4)
+            ->where('user_id', '=', auth()->user()->id)
+            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved','is_complete', 'control_number', 'payment_status_id','amount','expire_date')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        foreach ($applications as $application){
+
+            $attachment = Attachment::where('tracking_number','=',$application->tracking_number)->count('*');
+            $application->number_of_attachement = $attachment;
+        }
+
+        $response = ['applications' => $applications];
         return response()->json($response, 200);
     }
 
@@ -634,7 +701,7 @@ class schoolEstablishmentController extends Controller
                     ]);
             },
             'institute' => function ($query) {
-                $query->select('id', 'secure_token', 'name', 'registration_number', 'institute_email', 'institute_phone', 'box', 'ward_id', 'registration_certificate_copy', 'organizational_constitution', 'agreement_document', 'address');
+                $query->select('id', 'secure_token', 'name', 'registration_number', 'institute_email', 'institute_phone', 'box', 'ward_id', 'registration_certificate_copy', 'organizational_constitution', 'agreement_document', 'address','box');
             },
             'category' => function ($query) {
                 $query->select('id', 'secure_token', 'app_name');
@@ -672,7 +739,7 @@ class schoolEstablishmentController extends Controller
                         ])->select('id', 'establishing_school_id', 'tracking_number', 'manager_first_name', 'manager_middle_name', 'manager_last_name', 'occupation', 'house_number', 'street', 'manager_phone_number', 'manager_email', 'education_level', 'expertise_level', 'ward_id');
                     },
                 ])
-                    ->select('id', 'ward_id', 'registration_structure_id', 'school_category_id', 'school_sub_category_id', 'building_structure_id', 'secure_token', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio');
+                    ->select('id', 'ward_id', 'registration_structure_id', 'school_category_id', 'school_sub_category_id', 'building_structure_id', 'secure_token', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio','po_box');
             },
             'attachments' => function ($query) {
                 $query->with([
@@ -686,9 +753,27 @@ class schoolEstablishmentController extends Controller
             }
         ])
             ->where('tracking_number', '=', $tracking_number)
-            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved','control_number','updated_at', 'payment_status_id','amount','expire_date','folio')
+            ->where('user_id', '=', auth()->user()->id)
+            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved','control_number','updated_at','approved_at', 'payment_status_id','amount','expire_date','folio',)
             ->first();
+            
+        $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
 
+        if($application_check->is_approved == 2){
+
+        $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
+                                     ->join('staffs','staffs.id','=','maoni.user_from')
+                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
+                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->latest('maoni.created_at')->first();
+            
+        }else{
+            $approve_staff = null;
+
+        }
+
+
+        $application = ['application' => $application,'approve_staff' => $approve_staff];
         $response = ['application' => $application];
         return response()->json($response, 200);
     }
@@ -742,7 +827,27 @@ class schoolEstablishmentController extends Controller
             ->select('id', 'tracking_number', 'application_category_id', 'is_approved','updated_at','control_number','created_at', 'payment_status_id','amount','expire_date','folio')
             ->first();
 
+
+            
+        $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
+
+        if($application_check->is_approved == 2){
+
+        $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
+                                     ->join('staffs','staffs.id','=','maoni.user_from')
+                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
+                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->latest('maoni.created_at')->first();
+            
+        }else{
+            $approve_staff = null;
+
+        }
+
+
+        $application = ['application' => $application,'approve_staff' => $approve_staff];
         $response = ['application' => $application];
+
         return response()->json($response, 200);
     }
 
@@ -803,6 +908,26 @@ class schoolEstablishmentController extends Controller
             ->select('id', 'tracking_number', 'registry_type_id', 'application_category_id','is_approved','control_number','created_at', 'payment_status_id','amount','expire_date','folio')
             ->first();
 
+
+            
+        $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
+
+        if($application_check->is_approved == 2){
+
+        $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
+                                     ->join('staffs','staffs.id','=','maoni.user_from')
+                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
+                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->latest('maoni.created_at')->first();
+            
+        }else{
+            $approve_staff = null;
+
+        }
+
+
+        $application = ['application' => $application,'approve_staff' => $approve_staff];
+
         $response = ['application' => $application];
         return response()->json($response, 200);
     }
@@ -811,7 +936,7 @@ class schoolEstablishmentController extends Controller
     {
         $billCallback = $request->all();
 
-        Log::debug($billCallback);
+        
 
         $response = ['message' => 'Bill callback successful received'];
 
@@ -822,25 +947,23 @@ class schoolEstablishmentController extends Controller
     {
         $callback = $request->all();
 
-        Log::debug($callback);
 
         $response = ['message' => 'Callback successful received'];
 
         return response()->json($response,200);
     }
 
-    public function attachmentType($application_category): JsonResponse
+    public function attachmentType($application_category,$registry_type_id): JsonResponse
     {
 
-        // $attachment_types = Attachment_type::where('application_category_id', '=', $application_category)
-        //     ->where('status_id','=',1)
-        //     ->select('id', 'secure_token', 'attachment_name')
-        //     ->get();
+      
 
         $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
             ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
             ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
             ->where('attachment_types.status_id', '=', '1')
+            ->where('attachment_types.application_category_id', '=', $application_category)
+            ->where('attachment_types.registry_type_id', '=', $registry_type_id)
             ->get();
             // dd($attachmentTypes);
 
@@ -871,21 +994,20 @@ class schoolEstablishmentController extends Controller
      */
     private function createApplicationRequest($institute_info, array $applicaion_data, $establishment, Request $request): JsonResponse
     {
+
         $application = $institute_info->applications()->updateOrCreate($applicaion_data);
 
         $establishment->update([
-            'tracking_number' => $application->tracking_number
+            'tracking_number' => $applicaion_data['tracking_number']
         ]);
 
-        // $attachment_types = Attachment_type::where('application_category_id', '=', $request->input('application_category'))
-        //     ->where('status_id','=',1)
-        //     ->select('id', 'secure_token', 'attachment_name')
-        //     ->get();
 
         $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
         ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
         ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
         ->where('attachment_types.status_id', '=', '1')
+        ->where('attachment_types.application_category_id', '=', $request->input('application_category'))
+        ->where('attachment_types.registry_type_id', '=', $applicaion_data['registry_type_id'])
         ->get();
 
         $response = ['statusCode' => 1, 'application' => $application, 'attachment_types' => $attachment_types];
