@@ -192,7 +192,7 @@ class OwnerAndManagerController extends Controller
             ->where('establishing_schools.stage', '=', 1)
             ->select('establishing_schools.id', 'establishing_schools.school_name', 'establishing_schools.tracking_number')
             ->get();
-
+        Log::info(auth()->user()->id);
         $response = ['schools' => $schools];
 
         return response()->json($response, 200);
