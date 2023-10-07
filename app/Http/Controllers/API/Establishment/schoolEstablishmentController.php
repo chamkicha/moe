@@ -32,6 +32,7 @@ class schoolEstablishmentController extends Controller
 {
     public function establishSchool(Request $request)
     {
+           Log::debug($request);
     //  try{
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
@@ -44,7 +45,8 @@ class schoolEstablishmentController extends Controller
             'school_sub_category' => 'required|integer',
             'language' => 'required|integer',
             'building_structure' => 'required|integer',
-            'ward' => 'required|integer',
+            'ward' => 'required',
+            'village_id' => 'required',
             'registration_structure' => 'required|integer',
         ]);
 
@@ -68,7 +70,7 @@ class schoolEstablishmentController extends Controller
                 'personal_identity_type' => 'required|integer',
                 'personal_id_number' => 'required|string',
                 'personal_address' => 'required|string',
-                'ward_of_person' => 'required|integer'
+                'ward_of_person' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -83,7 +85,7 @@ class schoolEstablishmentController extends Controller
                 'institute_email' => 'required|string',
                 'institute_phone' => 'required|string',
                 'box' => 'required|string',
-                'ward' => 'required|integer',
+                'ward' => 'required',
                 'address' => 'required|string',
                 'institute_attachments' => 'required|array',
                 'institute_attachments.*.attachment_type' => 'required|integer',
@@ -120,6 +122,8 @@ class schoolEstablishmentController extends Controller
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
+            'village_id' => $request->input('village_id'),
+            
             'registration_structure_id' => $request->input('registration_structure'),
             'stage' => 1,
             'file_number' => generateFileNumber($registry->id,$request->input('school_category')),
@@ -147,6 +151,8 @@ class schoolEstablishmentController extends Controller
                 'school_token' => $establishment->secure_token,
                 'registry_token' => $person_info->secure_token
             ]);
+
+
 
             $applicaion_data = [
                 'secure_token' => Str::random(40),
@@ -238,7 +244,7 @@ class schoolEstablishmentController extends Controller
             'school_sub_category' => 'required|integer',
             'language' => 'required|integer',
             'building_structure' => 'required|integer',
-            'ward' => 'required|integer',
+            'ward' => 'required',
             'registration_structure' => 'required|integer',
         ]);
 
@@ -261,7 +267,7 @@ class schoolEstablishmentController extends Controller
                 'personal_identity_type' => 'required|integer',
                 'personal_id_number' => 'required|string',
                 'personal_address' => 'required|string',
-                'ward_of_person' => 'required|integer'
+                'ward_of_person' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -485,7 +491,7 @@ class schoolEstablishmentController extends Controller
                     Application::find($application->id)->update([
                         'control_number' => controlNumber(),
                         'amount' => $billInfo['amount'],
-                        'payment_status_id' => 1,
+                        'payment_status_id' => 2,
                         'expire_date' => $billInfo['end'],
                         'is_complete' => 1
                     ]);
@@ -754,7 +760,7 @@ class schoolEstablishmentController extends Controller
         ])
             ->where('tracking_number', '=', $tracking_number)
             ->where('user_id', '=', auth()->user()->id)
-            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved','control_number','updated_at','approved_at', 'payment_status_id','amount','expire_date','folio',)
+            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved','control_number','updated_at','approved_at', 'payment_status_id','amount','expire_date','folio','approved_at')
             ->first();
             
         $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
@@ -763,8 +769,7 @@ class schoolEstablishmentController extends Controller
 
         $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
                                      ->join('staffs','staffs.id','=','maoni.user_from')
-                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
-                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->select('staffs.*','maoni.coments')
                                      ->latest('maoni.created_at')->first();
             
         }else{
@@ -824,7 +829,7 @@ class schoolEstablishmentController extends Controller
                     ])->select('id', 'establishing_school_id', 'tracking_number', 'is_manager', 'owner_name', 'authorized_person', 'title', 'owner_email', 'phone_number', 'purpose');
                 }
             ])
-            ->select('id', 'tracking_number', 'application_category_id', 'is_approved','updated_at','control_number','created_at', 'payment_status_id','amount','expire_date','folio')
+            ->select('id', 'tracking_number', 'application_category_id', 'is_approved','updated_at','control_number','created_at', 'payment_status_id','amount','expire_date','folio','approved_at')
             ->first();
 
 
@@ -835,8 +840,7 @@ class schoolEstablishmentController extends Controller
 
         $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
                                      ->join('staffs','staffs.id','=','maoni.user_from')
-                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
-                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->select('staffs.*','maoni.coments')
                                      ->latest('maoni.created_at')->first();
             
         }else{
@@ -905,7 +909,7 @@ class schoolEstablishmentController extends Controller
                     ])->select('id', 'tracking_number', 'establishing_school_id', 'school_opening_date', 'level_of_education', 'is_seminary', 'registration_number','updated_at');
                 }
             ])
-            ->select('id', 'tracking_number', 'registry_type_id', 'application_category_id','is_approved','control_number','created_at', 'payment_status_id','amount','expire_date','folio')
+            ->select('id', 'tracking_number', 'registry_type_id', 'application_category_id','is_approved','control_number','created_at', 'payment_status_id','amount','expire_date','folio','approved_at')
             ->first();
 
 
@@ -916,8 +920,7 @@ class schoolEstablishmentController extends Controller
 
         $approve_staff = Maoni::where('maoni.trackingNo', '=', $tracking_number)
                                      ->join('staffs','staffs.id','=','maoni.user_from')
-                                     ->join('applications','applications.tracking_number','=','maoni.trackingNo')
-                                     ->select('staffs.*','maoni.coments','applications.approved_at')
+                                     ->select('staffs.*','maoni.coments')
                                      ->latest('maoni.created_at')->first();
             
         }else{
@@ -1009,8 +1012,10 @@ class schoolEstablishmentController extends Controller
         ->where('attachment_types.application_category_id', '=', $request->input('application_category'))
         ->where('attachment_types.registry_type_id', '=', $applicaion_data['registry_type_id'])
         ->get();
+        // dd($application);
 
         $response = ['statusCode' => 1, 'application' => $application, 'attachment_types' => $attachment_types];
+        // Log::debug($response);
 
         return response()->json($response, 200);
     }

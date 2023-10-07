@@ -18,6 +18,13 @@ class Maoni extends Model
 
         return $this->belongsTo(Staffs::class,'id','user_from');
     }
+
+
+    public function applications(): BelongsTo
+    {
+
+        return $this->belongsTo(Application::class,'trackingNo','tracking_number');
+    }
     
 
 }

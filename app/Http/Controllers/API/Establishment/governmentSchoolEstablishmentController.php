@@ -61,6 +61,7 @@ class governmentSchoolEstablishmentController extends Controller
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
+            'village_id' => $request->input('village_id'),
             'registration_structure_id' => $request->input('registration_structure'),
             'stream' => $request->input('stream'),
             'website' => $request->input('website'),

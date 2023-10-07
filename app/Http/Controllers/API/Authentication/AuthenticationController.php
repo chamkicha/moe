@@ -102,8 +102,8 @@ class AuthenticationController extends Controller
                     'statusCode' => 401,
                     'message' => 'Unauthorized',
                 ]);
-//            return response()
-//                ->json(['statusCode' => 401, 'message' => 'Unauthorized'], 401);
+            //            return response()
+            //                ->json(['statusCode' => 401, 'message' => 'Unauthorized'], 401);
             }
 
             RateLimiter::clear($this->throttleKey());
