@@ -190,7 +190,7 @@ class OwnerAndManagerController extends Controller
             ->where('applications.user_id', '=', auth()->user()->id)
             ->where('applications.is_approved', '=', 2)
             ->where('establishing_schools.stage', '=', 1)
-            ->select('establishing_schools.id', 'establishing_schools.school_name', 'establishing_schools.tracking_number')
+            ->select('establishing_schools.i', 'establishing_schools.school_name', 'establishing_schools.tracking_number')
             ->get();
         Log::info(auth()->user()->id);
         $response = ['schools' => $schools];
