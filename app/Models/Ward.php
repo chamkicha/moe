@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Ward extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'WardCode';
 
     public function district(): BelongsTo
     {
