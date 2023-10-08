@@ -22,7 +22,7 @@ class OwnerAndManagerController extends Controller
     {
 
         try {
-            DB::beginTransaction();
+
             Log::info($request->school);
             $validator = Validator::make($request->all(), [
                 'application_category' => 'required|integer',
@@ -66,6 +66,7 @@ class OwnerAndManagerController extends Controller
 
                 $school = Establishing_school::find($request->school);
                 if ($school) {
+                   DB::beginTransaction();
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
                     $tracking_number = generateTrackingNumber($school->school_category_id);
                     if ($app) {
@@ -146,12 +147,13 @@ class OwnerAndManagerController extends Controller
                                     // ]);
                                     Log::info($application ? 'Application saved' : 'Not Saved');
                                     $message = 'Ombi la umiliki na umeneja limetumwa kikamilifu';
+                                    DB::commit();
                     }
                 } else {
                     $message = 'Hakuna taarifa za shule hii. '.$request->school;
                 }
                 Log::info($message);
-                DB::commit();
+
                 return response()->json(['message' => $message], 200);
 
         } catch (\Exception $th) {
