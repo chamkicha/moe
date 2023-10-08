@@ -61,9 +61,9 @@ class OwnerAndManagerController extends Controller
             }
             $message = '';
             // Log::info("ID YA SHULE NI ".$request->school);
-            $school = Establishing_school::find($request->school);
-            if ($school) {
-
+            DB::transaction(function () use($request) {
+                $school = Establishing_school::find($request->school);
+                if ($school) {
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
                     $tracking_number = generateTrackingNumber($school->school_category_id);
                     if ($app) {
@@ -83,7 +83,7 @@ class OwnerAndManagerController extends Controller
                         ];
 
                         $owner = $school->owner()->updateOrCreate($owner_data);
-                        if ($owner) {
+
                             $referees = $request->input('referees');
                             $ownerRefereesSaved = false;
                             foreach ($referees as $referee) {
@@ -99,9 +99,9 @@ class OwnerAndManagerController extends Controller
                                     'phone_number' => $referee['phone_number']
                                 ];
 
-                                $ownerRefereesSaved = $owner->referees()->updateOrCreate($referee_data);
+                                $owner->referees()->updateOrCreate($referee_data);
                             }
-                            if ($ownerRefereesSaved) {
+
                                 $manager_data = [
                                     'manager_first_name' => $request->input('manager_first_name'),
                                     'manager_middle_name' => $request->input('manager_middle_name'),
@@ -121,7 +121,7 @@ class OwnerAndManagerController extends Controller
 
                                 $manager = $school->manager()->updateOrCreate($manager_data);
                                 Log::info($manager ? 'Manager saved' : 'Not Saved');
-                                if ($manager) {
+
                                     $application = Application::create([
                                         'secure_token' => Str::random(40),
                                         'foreign_token' => $app->foreign_token,
@@ -144,20 +144,14 @@ class OwnerAndManagerController extends Controller
                                     // ]);
                                     Log::info($application ? 'Application saved' : 'Not Saved');
                                     $message = 'Ombi la umiliki na umeneja limetumwa kikamilifu';
-                                } else {
-                                    $message = 'Taarifa za Meneja hazijahifadhiwa.';
-                                }
-                            }
-                        } else {
-                            $message = "Taarifa za mmiliki hazijahifadhiwa.";
-                        }
                     }
+                } else {
+                    $message = 'Hakuna taarifa za shule hii.';
+                }
+                Log::info($message);
+                return response()->json(['message' => $message], 200);
+            });// end transaction
 
-            } else {
-                $message = 'Hakuna taarifa za shule hii.';
-            }
-            Log::info($message);
-            return response()->json(['message' => $message], 200);
         } catch (\Exception $th) {
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
             Log::error($message);
