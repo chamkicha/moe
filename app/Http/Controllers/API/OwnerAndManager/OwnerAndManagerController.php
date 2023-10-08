@@ -22,7 +22,7 @@ class OwnerAndManagerController extends Controller
     {
 
         try {
-
+            DB::beginTransaction();
             Log::info($request->school);
             $validator = Validator::make($request->all(), [
                 'application_category' => 'required|integer',
@@ -58,6 +58,7 @@ class OwnerAndManagerController extends Controller
                 'is_manager' => 'required',
             ]);
 
+
             if ($validator->fails()) {
                 return response()->json($validator->errors());
             }
@@ -66,7 +67,7 @@ class OwnerAndManagerController extends Controller
 
                 $school = Establishing_school::find($request->school);
                 if ($school) {
-                   DB::beginTransaction();
+
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
                     $tracking_number = generateTrackingNumber($school->school_category_id);
                     if ($app) {
@@ -88,7 +89,6 @@ class OwnerAndManagerController extends Controller
                         $owner = $school->owner()->updateOrCreate($owner_data);
 
                             $referees = $request->input('referees');
-                            $ownerRefereesSaved = false;
                             foreach ($referees as $referee) {
                                 $referee_data = [
                                     'secure_token' => Str::random(40),
@@ -157,9 +157,9 @@ class OwnerAndManagerController extends Controller
                 return response()->json(['message' => $message], 200);
 
         } catch (\Exception $th) {
+            DB::rollback();
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
             Log::error($message);
-            DB::rollback();
             return response()->json(['message' => $message], 200);
         }
     }
