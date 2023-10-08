@@ -60,6 +60,7 @@ class OwnerAndManagerController extends Controller
 
 
             if ($validator->fails()) {
+                Log::info($validator->errors());
                 return response()->json($validator->errors());
             }
             $message = '';
