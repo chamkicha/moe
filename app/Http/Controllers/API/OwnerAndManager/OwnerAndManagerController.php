@@ -48,7 +48,7 @@ class OwnerAndManagerController extends Controller
                 'manager_ward' => 'required|integer',
                 'manager_house_number' => 'required|string',
                 'manager_street' => 'required|string',
-                'manager_phone_number' => 'required|string',
+                'manager_phone_number' => 'required|string|unique:managers',
                 'manager_email' => 'required|string',
                 'manager_expertise_level' => 'required|string',
                 'manager_education_level' => 'required|string',
