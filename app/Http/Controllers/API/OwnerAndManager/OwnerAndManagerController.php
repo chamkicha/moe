@@ -23,6 +23,7 @@ class OwnerAndManagerController extends Controller
 
         try {
             DB::beginTransaction();
+            Log::info($request->school);
             $validator = Validator::make($request->all(), [
                 'application_category' => 'required|integer',
                 'school' => 'required|integer',
