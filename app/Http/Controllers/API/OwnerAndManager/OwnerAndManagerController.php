@@ -157,7 +157,7 @@ class OwnerAndManagerController extends Controller
                 return response()->json(['message' => $message], 200);
 
         } catch (\Exception $th) {
-            DB::rollback();
+            DB::rollBack();
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
             Log::error($message);
             return response()->json(['message' => $message], 200);
