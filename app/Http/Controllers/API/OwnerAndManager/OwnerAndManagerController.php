@@ -22,6 +22,7 @@ class OwnerAndManagerController extends Controller
     {
 
         try {
+            DB::transaction();
             $validator = Validator::make($request->all(), [
                 'application_category' => 'required|integer',
                 'school' => 'required|integer',
@@ -61,7 +62,7 @@ class OwnerAndManagerController extends Controller
             }
             $message = '';
             // Log::info("ID YA SHULE NI ".$request->school);
-            DB::transaction(function () use($request) {
+
                 $school = Establishing_school::find($request->school);
                 if ($school) {
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
@@ -149,12 +150,13 @@ class OwnerAndManagerController extends Controller
                     $message = 'Hakuna taarifa za shule hii.';
                 }
                 Log::info($message);
+                DB::commit();
                 return response()->json(['message' => $message], 200);
-            });// end transaction
 
         } catch (\Exception $th) {
             $message = 'Kuna hitilafu imetokea, Tafadhali wasiliana na Msimamizi wa Mfumo. '.$th->getMessage();
             Log::error($message);
+            DB::rollback();
             return response()->json(['message' => $message], 200);
         }
     }
