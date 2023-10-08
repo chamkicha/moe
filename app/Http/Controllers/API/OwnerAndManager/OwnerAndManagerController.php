@@ -147,7 +147,7 @@ class OwnerAndManagerController extends Controller
                                     $message = 'Ombi la umiliki na umeneja limetumwa kikamilifu';
                     }
                 } else {
-                    $message = 'Hakuna taarifa za shule hii.';
+                    $message = 'Hakuna taarifa za shule hii. '.$request->school;
                 }
                 Log::info($message);
                 DB::commit();
