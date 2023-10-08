@@ -60,7 +60,7 @@ class OwnerAndManagerController extends Controller
                 return response()->json($validator->errors());
             }
             $message = '';
-            Log::info("ID YA SHULE NI ".$request->school);
+            // Log::info("ID YA SHULE NI ".$request->school);
             $school = Establishing_school::find($request->school);
             if ($school) {
                 $school->stage = 2;
@@ -121,8 +121,8 @@ class OwnerAndManagerController extends Controller
                                 ];
 
                                 $manager = $school->manager()->updateOrCreate($manager_data);
+                                Log::info($manager ? 'Manager saved' : 'Not Saved');
                                 if ($manager) {
-
                                     $application = Application::create([
                                         'secure_token' => Str::random(40),
                                         'foreign_token' => $app->foreign_token,
@@ -142,6 +142,7 @@ class OwnerAndManagerController extends Controller
                                     // $manager->update([
                                     //     'tracking_number' => $tracking_number
                                     // ]);
+                                    Log::info($application ? 'Application saved' : 'Not Saved');
                                     $message = 'Ombi la umiliki na umeneja limetumwa kikamilifu';
                                 } else {
                                     $message = 'Taarifa za Meneja hazijahifadhiwa.';
