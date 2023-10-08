@@ -63,8 +63,7 @@ class OwnerAndManagerController extends Controller
             // Log::info("ID YA SHULE NI ".$request->school);
             $school = Establishing_school::find($request->school);
             if ($school) {
-                $school->stage = 2;
-                if ($school->save()) {
+
                     $app = Application::where('tracking_number', '=', $school->tracking_number)->first();
                     $tracking_number = generateTrackingNumber($school->school_category_id);
                     if ($app) {
@@ -132,10 +131,11 @@ class OwnerAndManagerController extends Controller
                                         'application_category_id' => $request->input('application_category'),
                                         'folio' => $school->max_folio + 1
                                     ]);
-
                                     $school->update([
+                                        'stage' =>  2,
                                         'max_folio' => $application->folio
                                     ]);
+
                                     // $owner->update([
                                     //     'tracking_number' => $tracking_number
                                     // ]);
@@ -152,7 +152,7 @@ class OwnerAndManagerController extends Controller
                             $message = "Taarifa za mmiliki hazijahifadhiwa.";
                         }
                     }
-                }
+
             } else {
                 $message = 'Hakuna taarifa za shule hii.';
             }
