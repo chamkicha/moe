@@ -17,6 +17,7 @@ class governmentSchoolEstablishmentController extends Controller
 {
     public function governmentEstablishment(Request $request): JsonResponse
     {
+        Log::debug($request);
 
         // try{
 
@@ -28,7 +29,7 @@ class governmentSchoolEstablishmentController extends Controller
             'school_sub_category' => 'required|integer',
             'language' => 'required|integer',
             'building_structure' => 'required|integer',
-            'ward' => 'required|integer',
+            'ward' => 'required',
             'registration_structure' => 'required|integer',
             'stream' => 'required|integer',
             'school_address' => 'required|string',

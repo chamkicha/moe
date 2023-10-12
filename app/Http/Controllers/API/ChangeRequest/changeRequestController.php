@@ -27,6 +27,8 @@ class changeRequestController extends Controller
 {
     public function sendChangeRequest(Request $request): JsonResponse
     {
+           Log::debug($request);
+
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
             'school' => 'required|integer',
@@ -190,7 +192,7 @@ class changeRequestController extends Controller
                     'referees.*.address' => 'required|string',
                     'referees.*.email' => 'required|string',
                     'referees.*.phone_number' => 'required|string',
-                    'referees.*.ward' => 'required|integer',
+                    'referees.*.ward' => 'required',
                     'owner_name' => 'required|string',
                     'authorized_person' => 'required|string',
                     'title' => 'required|string',
@@ -303,7 +305,7 @@ class changeRequestController extends Controller
                     'manager_middle_name' => 'required|string',
                     'manager_last_name' => 'required|string',
                     'manager_occupation' => 'required|string',
-                    'manager_ward' => 'required|integer',
+                    'manager_ward' => 'required',
                     'manager_house_number' => 'required|string',
                     'manager_street' => 'required|string',
                     'manager_phone_number' => 'required|string',
@@ -481,9 +483,10 @@ class changeRequestController extends Controller
             } elseif ($application_category->application_code == "KHS") {
 
                 $validator = Validator::make($request->all(), [
-                    'region' => 'required|integer',
-                    'district' => 'required|integer',
-                    'ward' => 'required|integer',
+                    'region' => 'required',
+                    'district' => 'required',
+                    'ward' => 'required'
+                    
                 ]);
 
                 if ($validator->fails()) {

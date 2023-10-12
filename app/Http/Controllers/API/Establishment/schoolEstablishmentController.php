@@ -32,7 +32,7 @@ class schoolEstablishmentController extends Controller
 {
     public function establishSchool(Request $request)
     {
-           Log::debug($request);
+        //    Log::debug($request);
     //  try{
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
