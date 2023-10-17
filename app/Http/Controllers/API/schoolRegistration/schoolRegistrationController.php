@@ -102,6 +102,7 @@ class schoolRegistrationController extends Controller
             'user_id' => auth()->user()->id,
             'registry_type_id' => $applicant->registry_type_id,
             'application_category_id' => $request->input('application_category'),
+            'payment_status_id' => 2,  //bypass payment
             'folio' => $school->max_folio + 1
         ]);
 
