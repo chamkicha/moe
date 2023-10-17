@@ -64,6 +64,7 @@ class changeRequestController extends Controller
                 ]);
 
                 $appRequest = $this->createApplicationChangeRequest($application, $request, $school, $stream);
+                // dd($appRequest);
 
                 if ($application->registry_type_id != 3) {
 
@@ -84,6 +85,7 @@ class changeRequestController extends Controller
                     ];
 
                     $bill = bill($billInfo);
+                    // dd($bill);
 
 //                    $response = json_decode(json_encode($bill), TRUE);
 
@@ -380,6 +382,7 @@ class changeRequestController extends Controller
                         'start' => str_replace("*", 'T', $date),
                         'end' => str_replace("*", 'T', $endDate),
                     ];
+                    // dd($billInfo);
 
                     $bill = bill($billInfo);
 
@@ -485,7 +488,8 @@ class changeRequestController extends Controller
                 $validator = Validator::make($request->all(), [
                     'region' => 'required',
                     'district' => 'required',
-                    'ward' => 'required'
+                    'ward' => 'required',
+                    'village_id' => 'required'
                     
                 ]);
 
@@ -497,6 +501,7 @@ class changeRequestController extends Controller
                     'secure_token' => Str::random(40),
                     'establishing_school_id' => $school->id,
                     'ward_id' => $request->input('ward'),
+                    'village_id' => $request->input('village_id'),
                 ]);
 
                 $appRequest = $this->createApplicationChangeRequest($application, $request, $school, $school_transfer);
@@ -942,6 +947,7 @@ class changeRequestController extends Controller
             'registry_type_id' => $application->registry_type,
             'folio' => $school->max_folio + 1
         ]);
+
 
         $school->update([
             'max_folio' => $appRequest->folio

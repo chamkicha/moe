@@ -73,7 +73,8 @@ function controlNumber(): int
     $url = env('BASE_URL') . '/api/bill-payment/sync/manage-bill';
     $data = $billInfo;
 
-    return xmlResponse($url, inputXmlBill($data), $data['BillId']);
+    // return xmlResponse($url, inputXmlBill($data), $data['BillId']);
+    return "NA";
 }
 
  function xmlResponse($url, $xmlData, $tracking_number)
