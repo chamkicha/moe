@@ -103,7 +103,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,   //Bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -170,7 +170,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2, //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -287,7 +287,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -402,7 +402,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -469,7 +469,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -490,7 +490,6 @@ class changeRequestController extends Controller
                     'district' => 'required',
                     'ward' => 'required',
                     'village_id' => 'required'
-                    
                 ]);
 
                 if ($validator->fails()) {
@@ -542,11 +541,11 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
-                            $response = ['statusCode' => 1, 'message' => 'Ombi la Kuamisha shule limetumwa kikamilifu'];
+                            $response = ['statusCode' => 1, 'message' => 'Ombi la Kuhamisha shule limetumwa kikamilifu'];
                             return response()->json($response, 200);
 //                        }
 //                    }
@@ -600,7 +599,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -673,7 +672,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -732,7 +731,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,  //bypass payment
                                 'expire_date' => $billInfo['end']
                             ]);
 
@@ -800,7 +799,7 @@ class changeRequestController extends Controller
                             Application::find($appRequest->id)->update([
                                 'control_number' => controlNumber(),
                                 'amount' => $billInfo['amount'],
-                                'payment_status_id' => 1,
+                                'payment_status_id' => 2,
                                 'expire_date' => $billInfo['end']
                             ]);
 
