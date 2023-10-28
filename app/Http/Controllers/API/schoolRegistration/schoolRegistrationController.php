@@ -159,12 +159,9 @@ class schoolRegistrationController extends Controller
         $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
-<<<<<<< HEAD
                 'village.ward.district.region',
-=======
-                'ward.district.region',
-                'street',
->>>>>>> 7b378815c779ba7c2bfc2db20b94b881de18e1e3
+                // 'ward.district.region',
+                // 'village',
                 'category' => function($query){
                 $query->select('id','category');
                 },

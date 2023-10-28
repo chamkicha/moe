@@ -69,15 +69,14 @@ class Establishing_school extends Model
         return $this->belongsTo(Application::class,'tracking_number','tracking_number');
     }
 
- 
+
 
     public function ward(): BelongsTo
     {
-
         return $this->belongsTo(Ward::class, 'ward_id', 'WardCode');
     }
 
-    public function street(): BelongsTo
+    public function village(): BelongsTo
     {
 
         return $this->belongsTo(Street::class, 'village_id', 'StreetCode');
