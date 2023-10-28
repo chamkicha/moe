@@ -698,7 +698,6 @@ class schoolEstablishmentController extends Controller
 
     public function showApplicationDetails($tracking_number): JsonResponse
     {
-
         $application = Application::with([
             'maoni',
             'personal' => function ($query) {
@@ -733,7 +732,7 @@ class schoolEstablishmentController extends Controller
                     'subcategory' => function($query){
                         $query->select('id','subcategory');
                     },
-                    'ward.district.region',
+                    'village.ward.district.region',
                     'owner' => function ($query) {
                         $query->with([
                             'referees' => function ($qr) {
@@ -861,7 +860,6 @@ class schoolEstablishmentController extends Controller
 
     public function showSchoolRegistrationDetails($tracking_number): JsonResponse
     {
-
         $application = Application::where('tracking_number', '=', $tracking_number)
             ->with([
                 'maoni',
@@ -885,11 +883,11 @@ class schoolEstablishmentController extends Controller
                                         'referees' => function ($qr) {
                                             $qr->with([
                                                 'village.ward.district.region'
-                                            ])->select('id', 'owner_id', 'first_name', 'middle_name', 'last_name', 'occupation', 'ward_id', 'address', 'email', 'phone_number');
+                                            ])->select('id', 'owner_id', 'first_name', 'middle_name', 'last_name', 'occupation', 'ward_id', 'village_id' ,'address', 'email', 'phone_number');
                                         }
                                     ])->select('id', 'establishing_school_id', 'is_manager', 'tracking_number', 'owner_name', 'authorized_person', 'title', 'owner_email', 'phone_number', 'purpose');
                                 },
-                                'village.ward.district.region',
+                                'ward.district.region',
                                 'language' => function($query){
                                     $query->select('id','language');
                                 },
