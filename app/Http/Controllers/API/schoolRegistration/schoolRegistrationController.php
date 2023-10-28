@@ -159,7 +159,12 @@ class schoolRegistrationController extends Controller
         $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
+<<<<<<< HEAD
                 'village.ward.district.region',
+=======
+                'ward.district.region',
+                'street',
+>>>>>>> 7b378815c779ba7c2bfc2db20b94b881de18e1e3
                 'category' => function($query){
                 $query->select('id','category');
                 },
@@ -170,7 +175,7 @@ class schoolRegistrationController extends Controller
             ->where('applications.user_id','=',auth()->user()->id)
             ->where('applications.is_approved', '=', 2)
             ->where('school_registrations.reg_status', '=', 1)
-            ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
+            ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id', 'establishing_schools.village_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
             ->get();
 
         $response = ['registered_schools' => $registered_schools];

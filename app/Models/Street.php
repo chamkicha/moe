@@ -9,13 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Street extends Model
 {
     use HasFactory;
-    protected $table = "streets";
-
-
 
     public function ward(): BelongsTo
-    {
-
+     {
         return $this->belongsTo(Ward::class, 'WardCode', 'WardCode');
     }
 }

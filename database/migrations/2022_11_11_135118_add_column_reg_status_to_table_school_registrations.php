@@ -14,7 +14,7 @@ class AddColumnRegStatusToTableSchoolRegistrations extends Migration
     public function up()
     {
         Schema::table('school_registrations', function (Blueprint $table) {
-            $table->integer('reg_status')->default(1)->nullable()->index();
+            $table->integer('reg_status')->default(0)->nullable()->index();
             $table->dateTime('deleted_at')->nullable()->index();
         });
     }
