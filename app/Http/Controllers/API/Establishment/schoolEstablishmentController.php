@@ -901,7 +901,7 @@ class schoolEstablishmentController extends Controller
                                     $query->select('id','curriculum');
                                 }
                             ])
-                                ->select('id', 'school_category_id', 'school_sub_category_id', 'po_box', 'school_address', 'ward_id', 'registration_structure_id', 'building_structure_id', 'secure_token', 'curriculum_id', 'sect_name_id', 'number_of_students', 'number_of_teachers', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio','language_id','stream','website');
+                                ->select('id', 'school_category_id', 'school_sub_category_id', 'po_box', 'school_address', 'ward_id', 'village_id' ,'registration_structure_id', 'building_structure_id', 'secure_token', 'curriculum_id', 'sect_name_id', 'number_of_students', 'number_of_teachers', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio','language_id','stream','website');
                         },
                         'education_level' => function($query){
                              $query->select('id','certificate','level');
