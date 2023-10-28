@@ -160,7 +160,7 @@ class schoolRegistrationController extends Controller
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
                 'village.ward.district.region',
-                // 'ward.district.region',
+                'ward.district.region',
                 // 'village',
                 'category' => function($query){
                 $query->select('id','category');
