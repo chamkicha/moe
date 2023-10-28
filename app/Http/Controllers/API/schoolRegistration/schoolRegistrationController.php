@@ -156,10 +156,10 @@ class schoolRegistrationController extends Controller
     public function registeredSchools(): JsonResponse
     {
 
-        $registered_schools = Establishing_school::join('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
-            ->join('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
+        $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
+            ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
-                'ward.district.region',
+                'village.ward.district.region',
                 'category' => function($query){
                 $query->select('id','category');
                 },

@@ -20,6 +20,7 @@ class Institute_info extends Model
         'institute_phone',
         'box',
         'ward',
+        'street',
         'registration_certificate_copy',
         'organizational_constitution',
         'agreement_document',
@@ -42,6 +43,13 @@ class Institute_info extends Model
     {
 
         return $this->belongsTo(Ward::class,'ward_id','id');
+    }
+
+
+    public function village(): BelongsTo
+    {
+
+        return $this->belongsTo(Street::class, 'street', 'StreetCode');
     }
 
     public function attachments(): HasMany

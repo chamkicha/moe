@@ -33,4 +33,12 @@ class Manager extends Model
 
         return $this->belongsTo(Ward::class,'ward_id','id');
     }
+
+
+
+    public function village(): BelongsTo
+    {
+
+        return $this->belongsTo(Street::class, 'street', 'StreetCode');
+    }
 }

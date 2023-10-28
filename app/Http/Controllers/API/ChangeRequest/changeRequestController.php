@@ -957,12 +957,13 @@ class changeRequestController extends Controller
         ]);
 
         foreach ($request->input('attachments') as $attachment) {
+            $attachment_path = base64pdfToFile($attachment['attachment_path']);
 
             $attachment = Attachment::create([
                 'secure_token' => Str::random(40),
                 'uploader_token' => auth()->user()->secure_token,
                 'tracking_number' => $appRequest->tracking_number,
-                'attachment_path' => $attachment['attachment_path'],
+                'attachment_path' => $attachment_path,
                 'attachment_type_id' => $attachment['attachment_type'],
             ]);
         }

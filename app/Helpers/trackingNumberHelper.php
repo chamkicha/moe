@@ -4,6 +4,30 @@
 use App\Models\Registry_type;
 use App\Models\School_category;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
+
+
+
+if (!function_exists('base64pdfToFile')) {
+
+    function base64pdfToFile($base64PDF){
+    
+        
+    
+        $binaryPDF = base64_decode($base64PDF);
+    
+        $pathName = '/attachments/'.Carbon::now()->format('YmdHis').Str::random(10).'.pdf';
+        $filePath = public_path().$pathName;
+        
+    
+        // Try to save the binary data to the file
+        if (file_put_contents($filePath, $binaryPDF)) {
+            return $pathName;
+        } else {
+            return null;
+        }
+    }
+    }
 
 function generateTrackingNumber($schoolCategory){
 

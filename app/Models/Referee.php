@@ -18,6 +18,7 @@ class Referee extends Model
         'occupation',
         'owner_id',
         'ward_id',
+        'village_id',
         'address',
         'email',
         'phone_number'
@@ -27,5 +28,13 @@ class Referee extends Model
     {
 
         return $this->belongsTo(Ward::class,'ward_id','id');
+    }
+
+
+
+    public function village(): BelongsTo
+    {
+
+        return $this->belongsTo(Street::class, 'village_id', 'StreetCode');
     }
 }

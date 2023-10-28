@@ -377,11 +377,13 @@ class schoolEstablishmentController extends Controller
 
             foreach ($request->input('attachments') as $attachment) {
 
+                $attachment_path = base64pdfToFile($attachment['attachment_path']);
+
                 Attachment::create([
                     'secure_token' => Str::random(40),
                     'uploader_token' => auth()->user()->secure_token,
                     'tracking_number' => $tracking_number,
-                    'attachment_path' => $attachment['attachment_path'],
+                    'attachment_path' => $attachment_path,
                     'attachment_type_id' => $attachment['attachment_type'],
                 ]);
             }
@@ -419,11 +421,13 @@ class schoolEstablishmentController extends Controller
 
         foreach ($request->input('attachments') as $attachment) {
 
+            $attachment_path = base64pdfToFile($attachment['attachment_path']);
+
             Attachment::create([
                 'secure_token' => Str::random(40),
                 'uploader_token' => auth()->user()->secure_token,
                 'tracking_number' => $tracking_number,
-                'attachment_path' => $attachment['attachment_path'],
+                'attachment_path' => $attachment_path,
                 'attachment_type_id' => $attachment['attachment_type'],
             ]);
         }
@@ -521,7 +525,7 @@ class schoolEstablishmentController extends Controller
             'institute' => function ($query) {
                 $query->select('id', 'secure_token', 'name', 'registration_number', 'institute_email', 'institute_phone', 'box', 'registration_certificate_copy', 'organizational_constitution', 'agreement_document', 'institute_address', 'ward_id')
                     ->with([
-                        'ward.district.region'
+                        'village.ward.district.region'
                     ]);
             },
             'category' => function ($query) {
@@ -568,7 +572,7 @@ class schoolEstablishmentController extends Controller
             'institute' => function ($query) {
                 $query->select('id', 'secure_token', 'name', 'registration_number', 'institute_email', 'institute_phone', 'box', 'registration_certificate_copy', 'organizational_constitution', 'agreement_document', 'institute_address', 'ward_id')
                     ->with([
-                        'ward.district.region'
+                        'village.ward.district.region'
                     ]);
             },
             'category' => function ($query) {
@@ -729,23 +733,23 @@ class schoolEstablishmentController extends Controller
                     'subcategory' => function($query){
                         $query->select('id','subcategory');
                     },
-                    'ward.district.region',
+                    'village.ward.district.region',
                     'owner' => function ($query) {
                         $query->with([
                             'referees' => function ($qr) {
                                 $qr->with([
-                                    'ward.district.region'
+                                    'village.ward.district.region'
                                 ])->select('id', 'owner_id','first_name', 'middle_name', 'last_name', 'occupation', 'ward_id', 'address', 'email', 'phone_number');
                             }
                         ])->select('id', 'establishing_school_id','tracking_number', 'owner_name', 'authorized_person', 'title', 'owner_email', 'phone_number', 'purpose');
                     },
                     'manager' => function ($query) {
                         $query->with([
-                            'ward.district.region'
+                            'village.ward.district.region'
                         ])->select('id', 'establishing_school_id', 'tracking_number', 'manager_first_name', 'manager_middle_name', 'manager_last_name', 'occupation', 'house_number', 'street', 'manager_phone_number', 'manager_email', 'education_level', 'expertise_level', 'ward_id');
                     },
                 ])
-                    ->select('id', 'ward_id', 'registration_structure_id', 'school_category_id', 'school_sub_category_id', 'building_structure_id', 'secure_token', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio','po_box');
+                    ->select('id', 'ward_id', 'village_id', 'registration_structure_id', 'school_category_id', 'school_sub_category_id', 'building_structure_id', 'secure_token', 'school_name', 'school_phone', 'school_email', 'school_size', 'area', 'tracking_number','file_number','school_folio','po_box');
             },
             'attachments' => function ($query) {
                 $query->with([
@@ -795,7 +799,7 @@ class schoolEstablishmentController extends Controller
                         'denomination',
                         'referees' => function ($qr) {
                             $qr->with([
-                                'ward.district.region'
+                                'village.ward.district.region'
                             ])->select('id', 'owner_id', 'first_name', 'middle_name', 'last_name', 'occupation', 'ward_id', 'address', 'email', 'phone_number');
                         },
                         'school' => function ($query) {
@@ -808,10 +812,10 @@ class schoolEstablishmentController extends Controller
                                 },
                                 'manager' => function ($query) {
                                     $query->with([
-                                        'ward.district.region'
+                                        'village.ward.district.region'
                                     ])->select('id', 'establishing_school_id', 'tracking_number', 'manager_first_name', 'manager_middle_name', 'manager_last_name', 'occupation', 'house_number', 'street', 'manager_phone_number', 'manager_email', 'education_level', 'expertise_level', 'ward_id');
                                 },
-                                'ward.district.region',
+                                'village.ward.district.region',
                                 'language' => function($query){
                                     $query->select('id','language');
                                 },
@@ -873,19 +877,19 @@ class schoolEstablishmentController extends Controller
                                 },
                                 'manager' => function ($query) {
                                     $query->with([
-                                        'ward.district.region'
+                                        'village.ward.district.region'
                                     ])->select('id', 'establishing_school_id', 'tracking_number', 'manager_first_name', 'manager_middle_name', 'manager_last_name', 'occupation', 'house_number', 'street', 'manager_phone_number', 'manager_email', 'education_level', 'expertise_level', 'ward_id');
                                 },
                                 'owner' => function ($query) {
                                     $query->with([
                                         'referees' => function ($qr) {
                                             $qr->with([
-                                                'ward.district.region'
+                                                'village.ward.district.region'
                                             ])->select('id', 'owner_id', 'first_name', 'middle_name', 'last_name', 'occupation', 'ward_id', 'address', 'email', 'phone_number');
                                         }
                                     ])->select('id', 'establishing_school_id', 'is_manager', 'tracking_number', 'owner_name', 'authorized_person', 'title', 'owner_email', 'phone_number', 'purpose');
                                 },
-                                'ward.district.region',
+                                'village.ward.district.region',
                                 'language' => function($query){
                                     $query->select('id','language');
                                 },
