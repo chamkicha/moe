@@ -48,6 +48,6 @@ class Personal_info extends Model
     public function ward(): BelongsTo
     {
 
-        return $this->belongsTo(Ward::class,'ward_id','id');
+        return $this->belongsTo(Ward::class,'ward_id','WardCode');
     }
 }

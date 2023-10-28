@@ -733,7 +733,7 @@ class schoolEstablishmentController extends Controller
                     'subcategory' => function($query){
                         $query->select('id','subcategory');
                     },
-                    'village.ward.district.region',
+                    'ward.district.region',
                     'owner' => function ($query) {
                         $query->with([
                             'referees' => function ($qr) {
