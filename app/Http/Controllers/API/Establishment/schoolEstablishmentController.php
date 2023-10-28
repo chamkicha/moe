@@ -887,7 +887,7 @@ class schoolEstablishmentController extends Controller
                                         }
                                     ])->select('id', 'establishing_school_id', 'is_manager', 'tracking_number', 'owner_name', 'authorized_person', 'title', 'owner_email', 'phone_number', 'purpose');
                                 },
-                                'ward.district.region',
+                                'village.ward.district.region',
                                 'language' => function($query){
                                     $query->select('id','language');
                                 },
