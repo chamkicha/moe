@@ -72,9 +72,14 @@ class Establishing_school extends Model
     public function ward(): BelongsTo
     {
 
-        return $this->belongsTo(Ward::class, 'ward_id', 'id');
+        return $this->belongsTo(Ward::class, 'ward_id', 'WardCode');
     }
 
+    public function street(): BelongsTo
+    {
+
+        return $this->belongsTo(Street::class, 'village_id', 'StreetCode');
+    }
     public function registration_structure(): BelongsTo
     {
 

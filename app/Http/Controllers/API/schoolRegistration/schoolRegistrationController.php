@@ -160,6 +160,7 @@ class schoolRegistrationController extends Controller
             ->join('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
                 'ward.district.region',
+                'street',
                 'category' => function($query){
                 $query->select('id','category');
                 },
@@ -170,7 +171,7 @@ class schoolRegistrationController extends Controller
             ->where('applications.user_id','=',auth()->user()->id)
             ->where('applications.is_approved', '=', 2)
             ->where('school_registrations.reg_status', '=', 1)
-            ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
+            ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id', 'establishing_schools.village_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
             ->get();
 
         $response = ['registered_schools' => $registered_schools];
