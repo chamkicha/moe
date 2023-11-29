@@ -23,7 +23,7 @@ class OwnerAndManagerController extends Controller
 
         try {
             DB::beginTransaction();
-            Log::info($request->school);
+            // Log::info($request->school);
             $validator = Validator::make($request->all(), [
                 'application_category' => 'required|integer',
                 'school' => 'required|integer',
@@ -60,7 +60,7 @@ class OwnerAndManagerController extends Controller
 
 
             if ($validator->fails()) {
-                Log::info($validator->errors());
+                // Log::info($validator->errors());
                 return response()->json($validator->errors());
             }
             $message = '';
@@ -124,7 +124,7 @@ class OwnerAndManagerController extends Controller
                                 ];
 
                                 $manager = $school->manager()->updateOrCreate($manager_data);
-                                Log::info($manager ? 'Manager saved' : 'Not Saved');
+                                // Log::info($manager ? 'Manager saved' : 'Not Saved');
 
                                     $application = Application::create([
                                         'secure_token' => Str::random(40),
@@ -147,14 +147,14 @@ class OwnerAndManagerController extends Controller
                                     // $manager->update([
                                     //     'tracking_number' => $tracking_number
                                     // ]);
-                                    Log::info($application ? 'Application saved' : 'Not Saved');
+                                    // Log::info($application ? 'Application saved' : 'Not Saved');
                                     $message = 'Ombi la umiliki na umeneja limetumwa kikamilifu';
                                     DB::commit();
                     }
                 } else {
                     $message = 'Hakuna taarifa za shule hii. '.$request->school;
                 }
-                Log::info($message);
+                // Log::info($message);
 
                 return response()->json(['message' => $message], 200);
 

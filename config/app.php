@@ -123,6 +123,12 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+
+
+    'post_max_size' => '64M',
+    'upload_max_filesize' => '64M',
+
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

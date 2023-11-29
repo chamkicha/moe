@@ -33,13 +33,14 @@ class schoolEstablishmentController extends Controller
     public function establishSchool(Request $request)
     {
         //    Log::debug($request);
+        //    dd($request);
     //  try{
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
             'school_name' => 'required',
             'school_phone' => 'required|string',
             'school_email' => 'required|string',
-            'area' => 'required',
+            'area' => 'required|numeric|between:1,999999.99',
             'registry_type' => 'required|integer',
             'school_category' => 'required|integer',
             'school_sub_category' => 'required|integer',
@@ -51,7 +52,11 @@ class schoolEstablishmentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'statusCode' => 202, 
+                'message' => 'something went wrong',
+               'error' => $validator->errors()]
+            );
         }
 
         // DB::beginTransaction();
@@ -74,7 +79,12 @@ class schoolEstablishmentController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                
+                return response()->json([
+                    'statusCode' => 202, 
+                    'message' => 'something went wrong',
+                   'error' => $validator->errors()]
+                );
             }
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
@@ -93,21 +103,26 @@ class schoolEstablishmentController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json([
+                    'statusCode' => 202, 
+                    'message' => 'something went wrong',
+                   'error' => $validator->errors()]
+                );
+                
             }
 
         }
 
-        $incomplete = Application::where('user_id','=',auth()->user()->id)
-            ->where('application_category_id','=',1)
-            ->where('is_complete','=',0)
-            ->count('*');
+        // $incomplete = Application::where('user_id','=',auth()->user()->id)
+        //     ->where('application_category_id','=',1)
+        //     ->where('is_complete','=',0)
+        //     ->count('*');
 
-        if ($incomplete > 0){
+        // if ($incomplete > 0){
 
-            $response = ['statusCode' => 0, 'message' => 'Samahani una maombi '.$incomplete.' aujakamilisha kuweka viambatanisho tafadhali nenda kwenye orodha yako ya maombi kamilisha au futa kama huna kazi nayo tena maombi hayo ili uweze kuanzisha shule ingine, ahsante'];
-            return response($response,200);
-        }
+        //     $response = ['statusCode' => 0, 'message' => 'Samahani una maombi '.$incomplete.' aujakamilisha kuweka viambatanisho tafadhali nenda kwenye orodha yako ya maombi kamilisha au futa kama huna kazi nayo tena maombi hayo ili uweze kuanzisha shule ingine, ahsante'];
+        //     return response($response,200);
+        // }
 
         $folio = Establishing_school::where('school_category_id','=',$request->input('school_category'))->max('school_folio');
 
@@ -163,6 +178,7 @@ class schoolEstablishmentController extends Controller
                 'folio' => 1
             ];
 
+
             return $this->createApplicationRequest($person_info, $applicaion_data, $establishment, $request);
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
@@ -191,6 +207,8 @@ class schoolEstablishmentController extends Controller
                 $institute_info->attachments()->updateOrCreate($inst_attachment);
             }
 
+
+
             $school_registry = School_registry::create([
                 'school_token' => $establishment->secure_token,
                 'registry_token' => $institute_info->secure_token
@@ -203,6 +221,9 @@ class schoolEstablishmentController extends Controller
                 'tracking_number' => generateTrackingNumber($request->input('school_category')),
                 'registry_type_id' => $request->input('registry_type'),
             ];
+
+            // $this->saveAttachments($request->institute_attachments, $applicaion_data['tracking_number']);
+
 
             return $this->createApplicationRequest($institute_info, $applicaion_data, $establishment, $request);
 
@@ -249,7 +270,12 @@ class schoolEstablishmentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'statusCode' => 202, 
+                'message' => 'something went wrong',
+               'error' => $validator->errors()]
+            );
+            
         }
         // DB::beginTransaction();
 
@@ -271,7 +297,12 @@ class schoolEstablishmentController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json([
+                    'statusCode' => 202, 
+                    'message' => 'something went wrong',
+                   'error' => $validator->errors()]
+                );
+                
             }
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
@@ -290,7 +321,12 @@ class schoolEstablishmentController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors());
+                return response()->json([
+                    'statusCode' => 202, 
+                    'message' => 'something went wrong',
+                   'error' => $validator->errors()]
+                );
+                
             }
 
         }
@@ -341,6 +377,7 @@ class schoolEstablishmentController extends Controller
                 'registry_type_id' => $request->input('registry_type'),
                 'tracking_number' => generateTrackingNumber($request->input('school_category'))
             ];
+
 
             return $this->createApplicationRequest($person_info, $applicaion_data, $establishment, $request);
             // DB::commit();
@@ -395,12 +432,31 @@ class schoolEstablishmentController extends Controller
 
         }
 
-    //  } catch (\Exception $th) {
-    //     DB::rollback();
-    //     $error = $th->getMessage();
-    //     Log::error($message);
-    //     return response()->json(['message' => 'something went wrong','error' => $error], 200);
-    //  }
+        //  } catch (\Exception $th) {
+        //     DB::rollback();
+        //     $error = $th->getMessage();
+        //     Log::error($message);
+        //     return response()->json(['message' => 'something went wrong','error' => $error], 200);
+        //  }
+    }
+
+    public function saveAttachments($attachments, $tracking_number){
+
+        foreach ($attachments as $attachment) {
+            // dd($attachment['attachment_path']);
+
+            $attachment_path = base64pdfToFile($attachment['attachment_path']);
+
+            Attachment::create([
+                'secure_token' => Str::random(40),
+                'uploader_token' => auth()->user()->secure_token,
+                'tracking_number' => $tracking_number,
+                'attachment_path' => $attachment_path,
+                'attachment_type_id' => $attachment['attachment_type'],
+            ]);
+        }
+
+
     }
 
     public function sendAttachments(Request $request)
@@ -414,7 +470,12 @@ class schoolEstablishmentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors());
+            return response()->json([
+                'statusCode' => 202, 
+                'message' => 'something went wrong',
+               'error' => $validator->errors()]
+            );
+            
         }
 
         $tracking_number = $request->input('tracking_number');
@@ -436,8 +497,11 @@ class schoolEstablishmentController extends Controller
             ->leftjoin('establishing_schools', 'applications.tracking_number', '=', 'establishing_schools.tracking_number')
             ->select('applications.id', 'applications.registry_type_id','applications.tracking_number', 'establishing_schools.school_name', 'establishing_schools.school_phone',)
             ->first();
+        // $application = Application::where('tracking_number', '=', $tracking_number)
+        //              ->first();
 
-        // dd($application);
+
+        if($application){
         if ($application->registry_type_id != 3) {
 
             $date = Carbon::now()->format('Y-m-d*H:s:i');
@@ -458,39 +522,6 @@ class schoolEstablishmentController extends Controller
 
             $bill = bill($billInfo);
 
-                //            Log::info($bill);
-                //
-                //            return json_decode(json_encode($bill), TRUE);
-                //
-                //            $statusCodetag = "TrxStsCode";
-                //            $billIDtag = "BillId";
-                //            $controlNumbertag = "PayCntrNum";
-                //
-                //            $codeData = getDataString($bill,$statusCodetag);
-                //            $billData = getDataString($bill,$billIDtag);
-                //            $controlNumberData = getDataString($bill,$controlNumbertag);
-                //
-                //            $codeDataXML =  toXML($codeData);
-                //            $billDataXML =  toXML($billData);
-                //            $controlNumberDataXML =  toXML($controlNumberData);
-                //
-                //            $codeDataJSON = toJSON($codeDataXML);
-                //            $billDataJSON = toJSON($billDataXML);
-                //            $controlNumberDataJSON = toJSON($controlNumberDataXML);
-                //
-                //            Log::info("codeData ".$codeData);
-                //            Log::info($codeDataJSON[0]);
-                //            Log::info("billData ". $billData);
-                //            Log::info($billDataJSON[0]);
-                //            Log::info("controlNumberData ". $controlNumberData);
-                //            Log::info($controlNumberDataJSON[0]);
-
-                //            if ($codeDataJSON[0] != 7101) {
-                //
-                //                Log::debug($bill);
-                //                $response = ['message' => 'Ooooop!, kuna tatizo la mtandao wa malipo, lakin ombi lako limetumwa kikamilifu'];
-                //                return response()->json($response, 200);
-                //            }
 
                     Application::find($application->id)->update([
                         'control_number' => controlNumber(),
@@ -504,6 +535,7 @@ class schoolEstablishmentController extends Controller
                     $response = ['statusCode' => 1,'message' => 'Ombi la kuanzisha shule limetumwa kikamilifu'];
                     return response()->json($response, 200);
 
+        }
         }
 
         $response = ['statusCode' => 1,'message' => 'Ombi la kuanzisha shule limetumwa kikamilifu'];
@@ -958,22 +990,59 @@ class schoolEstablishmentController extends Controller
         return response()->json($response,200);
     }
 
-    public function attachmentType($application_category,$registry_type_id): JsonResponse
+    public function attachmentType($application_category,$registry_type_id,$tracking_number): JsonResponse
     {
 
 
+        $establishment = Establishing_school::where('tracking_number',$tracking_number)->first();
+       
 
-        $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
-            ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
-            ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
-            ->where('attachment_types.status_id', '=', '1')
-            ->where('attachment_types.application_category_id', '=', $application_category)
-            ->where('attachment_types.registry_type_id', '=', $registry_type_id)
-            ->get();
-            // dd($attachmentTypes);
+        $registration_structure_id = $establishment->registration_structure_id;
+        $attachment_types = Attachment_type::
+                  leftJoin('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+                // ->leftJoin('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+                ->whereStatusId(1)
+                ->where('application_category_id', $application_category)
+                ->whereIn('registry_type_id' ,  [0,1])
+                ->where(function($query) use($registration_structure_id){
+                        $query->whereIn('registration_structure_id' , [0 , $registration_structure_id ]);
+                })
+                ->get();
+                // \Log::info('Idadi = '.count($attachment_types).' rs_id = '.$registration_structure_id.' tr ='.$tracking_number );
+                // \Log::info(json_encode($attachment_types));
+                $response = ['statusCode' => 1,'attachment_types' => $attachment_types];
+                return response()->json($response, 200);
+                
+        // dd($establishment);
+        //  \Log::info($establishment->registration_structure_id);
+        // if($establishment->registration_structure_id == 2){
+        //     $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
+        //         ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+        //         ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+        //         ->where('attachment_types.status_id', '=', '1')
+        //         ->where('attachment_types.application_category_id', '=', $application_category)
+        //         // ->where('attachment_types.registry_type_id', '=', $registry_type_id)
+        //         ->whereRaw('attachment_types.registry_type_id IN (0,1)')
+        //         ->where('attachment_types.is_backend', '=', 0)
+        //         ->get();
+        // }
+        // else{
+        //     \Log::info("Hapa hapa");
+        //     $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry','registration_structure_id')
+        //         ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+        //         ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
+        //         ->where('attachment_types.status_id', '=', '1')
+        //         ->where('attachment_types.application_category_id', '=', $application_category)
+        //         ->whereRaw('attachment_types.registry_type_id IN (0,1)')
+        //         ->where(function($query) {
+        //             $query->where('attachment_types.registration_structure_id', '!=', 2)
+        //                   ->orWhereNull('attachment_types.registration_structure_id');
+        //         })
+        //         ->where('attachment_types.is_backend', '=', 0)
+        //         ->get();
 
-        $response = ['statusCode' => 1,'attachment_types' => $attachment_types];
-        return response()->json($response, 200);
+        //     }
+        
     }
 
 //    public function checkIncomplete(){
@@ -1002,19 +1071,46 @@ class schoolEstablishmentController extends Controller
 
         $application = $institute_info->applications()->updateOrCreate($applicaion_data);
 
+        // $application = Application::create([
+        //     'secure_token' => $applicaion_data['secure_token'],
+        //     'user_id' => $applicaion_data['user_id'],
+        //     'foreign_token' => $establishment->secure_token,
+        //     'application_category_id' => $applicaion_data['application_category_id'],
+        //     'tracking_number' => $applicaion_data['tracking_number'],
+        //     'registry_type_id' => $applicaion_data['registry_type_id'],
+        //     'payment_status_id' => 2,
+        //     'folio' => $applicaion_data['folio']
+        // ]);
+
+        // dd($application);
+  
+
+        $this->saveAttachments($request->institute_attachments, $applicaion_data['tracking_number']);
+
+        // dd($application);
+
         $establishment->update([
             'tracking_number' => $applicaion_data['tracking_number']
         ]);
 
 
-        $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
-        ->join('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
-        ->join('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
-        ->where('attachment_types.status_id', '=', '1')
-        ->where('attachment_types.application_category_id', '=', $request->input('application_category'))
-        ->where('attachment_types.registry_type_id', '=', $applicaion_data['registry_type_id'])
-        ->get();
-        // dd($application);
+        $establishment = Establishing_school::where('tracking_number',$applicaion_data['tracking_number'])->first();
+        
+        $attachments = Attachment::where('tracking_number',$applicaion_data['tracking_number'])->get();
+        $attachments_array = [];
+        foreach($attachments as $attachment){
+            $attachments_array[] = $attachment->attachment_type_id;
+        }
+        
+        $registration_structure_id = $establishment->registration_structure_id;
+        $attachment_types = Attachment_type::where('application_category_id', $request->input('application_category'))
+                ->whereIn('registry_type_id' ,  [0,$application->registry_type_id])
+                ->whereIn('registration_structure_id' , [0 , $registration_structure_id ])
+                ->whereNotIn('id', $attachments_array)
+                ->where('status_id',1)
+                ->get();
+
+       
 
         $response = ['statusCode' => 1, 'application' => $application, 'attachment_types' => $attachment_types];
         // Log::debug($response);

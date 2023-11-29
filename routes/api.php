@@ -55,7 +55,8 @@ Route::controller(MetaDataController::class)->group(function (){
     Route::get('schoolGender-types','schoolGenderTypes');
     Route::get('languages','languages');
     Route::get('school-specialization','schoolSpecialization');
-    Route::get('institute-attachments/{id?}','instituteAttachments');
+    // Route::get('institute-attachments/{id?}','instituteAttachments');
+    Route::get('institute-attachments/{registry_type_id}/{registration_structure_id?}','instituteAttachments');
     Route::get('attachments/types/{id?}','attachmentsTypes');
 
     Route::get('ownership_types','ownership_types');
@@ -86,7 +87,7 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('application/{tracking_number?}/details','showApplicationDetails');
         Route::get('application/owner-and-manager/{tracking_number?}/details','showOwnerAndManagerDetails');
         Route::get('application/school-registration/{tracking_number?}/details','showSchoolRegistrationDetails');
-        Route::get('get/attachment-type/{id}/{registry_type_id}','attachmentType');
+        Route::get('get/attachment-type/{id}/{registry_type_id}/{tracking_number}','attachmentType');
         Route::get('delete/application/{tracking_number?}','deleteApplication');
 
         Route::controller(passwordUpdateController::class)->group(function (){

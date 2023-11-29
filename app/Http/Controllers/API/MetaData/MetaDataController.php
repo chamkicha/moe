@@ -36,6 +36,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class MetaDataController extends Controller
 {
@@ -232,18 +233,36 @@ class MetaDataController extends Controller
         return response()->json($response,200);
     }
 
-    public function instituteAttachments($id): JsonResponse
+    
+    
+    public function instituteAttachments($registry_type_id,$registration_structure_id = ''): JsonResponse
     {
-
-        $attachment_types = Attachment_type::where('registry_type_id', '=', $id)
-            ->where('status_id','=',1)
-            ->select('id', 'secure_token', 'attachment_name')
-            ->get();
-
+        $attachment_types = Attachment_type::whereStatusId(1)
+                ->where('application_category_id', 1)
+                ->whereIn('registry_type_id' ,  [0,$registry_type_id])
+                ->where(function($query) use($registration_structure_id){
+                        // $query->whereIn('registry_type_id' , $registry_type_id ? [0,$registry_type_id] : [0]);
+                        $query->whereIn('registration_structure_id' , $registration_structure_id 
+                                                                      ? [$registration_structure_id ] : 
+                                                                      [0]
+                                        );
+                })
+                ->get();
         $response = ['attachment_types' => $attachment_types];
-
         return response()->json($response, 200);
     }
+
+    // public function instituteAttachments($id): JsonResponse
+    // {
+
+    //     $attachment_types = Attachment_type::where('registry_type_id', '=', $id)
+    //         ->where('status_id','=',1)
+    //         ->get();
+
+    //     $response = ['attachment_types' => $attachment_types];
+
+    //     return response()->json($response, 200);
+    // }
 
     public function attachmentsTypes($id): JsonResponse
     {

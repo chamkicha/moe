@@ -27,7 +27,7 @@ class changeRequestController extends Controller
 {
     public function sendChangeRequest(Request $request): JsonResponse
     {
-           Log::debug($request);
+        //    Log::debug($request);
 
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',

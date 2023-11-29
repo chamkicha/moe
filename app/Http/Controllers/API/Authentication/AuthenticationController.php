@@ -27,7 +27,7 @@ class AuthenticationController extends Controller
 
     public function register(Request $request): JsonResponse
     {
-        Log::debug($request);
+        // Log::debug($request);
         try{
           
         DB::beginTransaction();
@@ -82,6 +82,7 @@ class AuthenticationController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
+        //  \Log::info($request->email);
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',

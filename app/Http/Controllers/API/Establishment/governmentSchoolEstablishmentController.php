@@ -17,7 +17,7 @@ class governmentSchoolEstablishmentController extends Controller
 {
     public function governmentEstablishment(Request $request): JsonResponse
     {
-        Log::debug($request);
+        // Log::debug($request);
 
         // try{
 
