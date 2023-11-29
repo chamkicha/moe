@@ -241,11 +241,9 @@ class MetaDataController extends Controller
                 ->where('application_category_id', 1)
                 ->whereIn('registry_type_id' ,  [$registry_type_id])
                 ->where(function($query) use($registration_structure_id){
-                        // $query->whereIn('registry_type_id' , $registry_type_id ? [0,$registry_type_id] : [0]);
-                        $query->whereIn('registration_structure_id' , $registration_structure_id
-                                                                      ? [$registration_structure_id ] :
-                                                                      [0]
-                                        );
+                        if($registration_structure_id){
+                            $query->whereIn('registration_structure_id',[$registration_structure_id]);
+                        }
                 })
                 ->get();
         $response = ['attachment_types' => $attachment_types];
