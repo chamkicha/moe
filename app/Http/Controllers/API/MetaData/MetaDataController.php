@@ -233,17 +233,17 @@ class MetaDataController extends Controller
         return response()->json($response,200);
     }
 
-    
-    
+
+
     public function instituteAttachments($registry_type_id,$registration_structure_id = ''): JsonResponse
     {
         $attachment_types = Attachment_type::whereStatusId(1)
                 ->where('application_category_id', 1)
-                ->whereIn('registry_type_id' ,  [0,$registry_type_id])
+                ->whereIn('registry_type_id' ,  [$registry_type_id])
                 ->where(function($query) use($registration_structure_id){
                         // $query->whereIn('registry_type_id' , $registry_type_id ? [0,$registry_type_id] : [0]);
-                        $query->whereIn('registration_structure_id' , $registration_structure_id 
-                                                                      ? [$registration_structure_id ] : 
+                        $query->whereIn('registration_structure_id' , $registration_structure_id
+                                                                      ? [$registration_structure_id ] :
                                                                       [0]
                                         );
                 })
