@@ -443,7 +443,7 @@ class schoolEstablishmentController extends Controller
 
     public function saveAttachments($attachments, $tracking_number){
 
-        if(count($attachments) > 0){
+        if(is_array($attachments) && count($attachments) > 0){
             foreach ($attachments as $attachment) {
                 // dd($attachment['attachment_path']);
 
