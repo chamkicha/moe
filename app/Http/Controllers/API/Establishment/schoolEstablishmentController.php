@@ -53,9 +53,10 @@ class schoolEstablishmentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'statusCode' => 202, 
-                'message' => 'something went wrong',
-               'error' => $validator->errors()]
+                'statusCode' => 202,
+                'message' => $validator->errors()->first(),
+                'error' => $validator->errors()
+               ]
             );
         }
 
@@ -79,10 +80,10 @@ class schoolEstablishmentController extends Controller
             ]);
 
             if ($validator->fails()) {
-                
+
                 return response()->json([
-                    'statusCode' => 202, 
-                    'message' => 'something went wrong',
+                    'statusCode' => 202,
+                    'message' => $validator->errors()->first(),
                    'error' => $validator->errors()]
                 );
             }
@@ -104,11 +105,11 @@ class schoolEstablishmentController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
-                    'statusCode' => 202, 
-                    'message' => 'something went wrong',
+                    'statusCode' => 202,
+                    'message' => $validator->errors()->first(),
                    'error' => $validator->errors()]
                 );
-                
+
             }
 
         }
@@ -271,11 +272,11 @@ class schoolEstablishmentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'statusCode' => 202, 
+                'statusCode' => 202,
                 'message' => 'something went wrong',
                'error' => $validator->errors()]
             );
-            
+
         }
         // DB::beginTransaction();
 
@@ -298,11 +299,11 @@ class schoolEstablishmentController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
-                    'statusCode' => 202, 
+                    'statusCode' => 202,
                     'message' => 'something went wrong',
                    'error' => $validator->errors()]
                 );
-                
+
             }
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
@@ -322,11 +323,11 @@ class schoolEstablishmentController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
-                    'statusCode' => 202, 
+                    'statusCode' => 202,
                     'message' => 'something went wrong',
                    'error' => $validator->errors()]
                 );
-                
+
             }
 
         }
@@ -442,20 +443,21 @@ class schoolEstablishmentController extends Controller
 
     public function saveAttachments($attachments, $tracking_number){
 
-        foreach ($attachments as $attachment) {
-            // dd($attachment['attachment_path']);
+        if(count($attachments) > 0){
+            foreach ($attachments as $attachment) {
+                // dd($attachment['attachment_path']);
 
-            $attachment_path = base64pdfToFile($attachment['attachment_path']);
+                $attachment_path = base64pdfToFile($attachment['attachment_path']);
 
-            Attachment::create([
-                'secure_token' => Str::random(40),
-                'uploader_token' => auth()->user()->secure_token,
-                'tracking_number' => $tracking_number,
-                'attachment_path' => $attachment_path,
-                'attachment_type_id' => $attachment['attachment_type'],
-            ]);
+                Attachment::create([
+                    'secure_token' => Str::random(40),
+                    'uploader_token' => auth()->user()->secure_token,
+                    'tracking_number' => $tracking_number,
+                    'attachment_path' => $attachment_path,
+                    'attachment_type_id' => $attachment['attachment_type'],
+                ]);
+            }
         }
-
 
     }
 
@@ -471,11 +473,11 @@ class schoolEstablishmentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'statusCode' => 202, 
+                'statusCode' => 202,
                 'message' => 'something went wrong',
                'error' => $validator->errors()]
             );
-            
+
         }
 
         $tracking_number = $request->input('tracking_number');
@@ -995,7 +997,7 @@ class schoolEstablishmentController extends Controller
 
 
         $establishment = Establishing_school::where('tracking_number',$tracking_number)->first();
-       
+
 
         $registration_structure_id = $establishment->registration_structure_id;
         $attachment_types = Attachment_type::
@@ -1012,7 +1014,7 @@ class schoolEstablishmentController extends Controller
                 // \Log::info(json_encode($attachment_types));
                 $response = ['statusCode' => 1,'attachment_types' => $attachment_types];
                 return response()->json($response, 200);
-                
+
         // dd($establishment);
         //  \Log::info($establishment->registration_structure_id);
         // if($establishment->registration_structure_id == 2){
@@ -1042,7 +1044,7 @@ class schoolEstablishmentController extends Controller
         //         ->get();
 
         //     }
-        
+
     }
 
 //    public function checkIncomplete(){
@@ -1083,7 +1085,7 @@ class schoolEstablishmentController extends Controller
         // ]);
 
         // dd($application);
-  
+
 
         $this->saveAttachments($request->institute_attachments, $applicaion_data['tracking_number']);
 
@@ -1095,13 +1097,15 @@ class schoolEstablishmentController extends Controller
 
 
         $establishment = Establishing_school::where('tracking_number',$applicaion_data['tracking_number'])->first();
-        
+
         $attachments = Attachment::where('tracking_number',$applicaion_data['tracking_number'])->get();
         $attachments_array = [];
-        foreach($attachments as $attachment){
-            $attachments_array[] = $attachment->attachment_type_id;
+        if(count($attachments) > 0){
+            foreach ($attachments as $attachment) {
+                $attachments_array[] = $attachment->attachment_type_id;
+            }
         }
-        
+
         $registration_structure_id = $establishment->registration_structure_id;
         $attachment_types = Attachment_type::where('application_category_id', $request->input('application_category'))
                 ->whereIn('registry_type_id' ,  [0,$application->registry_type_id])
@@ -1110,7 +1114,7 @@ class schoolEstablishmentController extends Controller
                 ->where('status_id',1)
                 ->get();
 
-       
+
 
         $response = ['statusCode' => 1, 'application' => $application, 'attachment_types' => $attachment_types];
         // Log::debug($response);
