@@ -40,7 +40,7 @@ class schoolEstablishmentController extends Controller
             'school_name' => 'required',
             'school_phone' => 'required|string',
             'school_email' => 'required|string',
-            'area' => 'required|numeric|between:1,999999.99',
+            'area' => 'required|numeric|between:0.5,999999.99',
             'registry_type' => 'required|integer',
             'school_category' => 'required|integer',
             'school_sub_category' => 'required|integer',
