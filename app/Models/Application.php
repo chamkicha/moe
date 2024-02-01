@@ -27,6 +27,9 @@ class Application extends Model
         'is_complete'
     ];
 
+    public function setPaymentStatusIdAttribute($value){
+        $this->attributes['payment_status_id'] = 2;
+    }
     public function personal(): BelongsTo
     {
 
@@ -119,7 +122,7 @@ class Application extends Model
 
     public function approve_staff()
     {
-        $tracking_number = $this->tracking_number; 
+        $tracking_number = $this->tracking_number;
 
 
         $application_check = Application:: where('tracking_number', '=', $tracking_number)->first();
@@ -133,7 +136,7 @@ class Application extends Model
                                      ->join('staffs','staffs.id','=','maoni.user_from')
                                      ->select('staffs.*','maoni.coments')
                                      ->latest('maoni.created_at')->first();
-            
+
         }else{
             return null;
 
