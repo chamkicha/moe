@@ -11,6 +11,7 @@
         "ext-openssl": "*",
         "ext-simplexml": "*",
         "ext-xmlwriter": "*",
+        "barryvdh/laravel-cors": "^3.0",
         "doctrine/dbal": "^3.4",
         "flynsarmy/csv-seeder": "^2.0",
         "fruitcake/laravel-cors": "^2.0",

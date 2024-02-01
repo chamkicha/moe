@@ -7,7 +7,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CountApplicationsController;
+use App\Http\Controllers\PDFController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,3 +42,5 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 
 
+Route::get('/CountApplications/user-applications-count', [CountApplicationsController::class, 'getUserApplicationsCount']);
+Route::get('/generate-pdf/{tracking_number}/{name}', [PDFController::class, 'generatePDF']);

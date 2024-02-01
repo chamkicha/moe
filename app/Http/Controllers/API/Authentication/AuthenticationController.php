@@ -101,7 +101,7 @@ class AuthenticationController extends Controller
 
                 return response()->json([
                     'statusCode' => 401,
-                    'message' => 'Unauthorized',
+                    'message' => 'Samahani umekosea nywila au barua pepe',
                 ]);
             //            return response()
             //                ->json(['statusCode' => 401, 'message' => 'Unauthorized'], 401);
@@ -127,7 +127,7 @@ class AuthenticationController extends Controller
 
                 $response = [
                     'statusCode' => 200,
-                    'message' => 'Hi ' . $user->name . ', welcome to SAS APP, Samahani una maombi ' . $incomplete . ' haujakamilisha kuweka viambatanisho tafadhali nenda kwenye orodha yako ya maombi kamilisha au futa kama huna kazi nayo tena maombi hayo ili uweze kuanzisha shule ingine, ahsante',
+                    'message' => 'Habari ' . $user->name . ', karibu kwenye mfumo wa SAS, Samahani una maombi ' . $incomplete . ' haujakamilisha kuweka viambatanisho tafadhali nenda kwenye orodha yako ya maombi kamilisha au futa kama huna kazi nayo tena maombi hayo ili uweze kuanzisha shule ingine, ahsante',
                     'user' => $user->name,
                     'access_token' => $token,
                     'token_type' => 'Bearer'
@@ -137,7 +137,7 @@ class AuthenticationController extends Controller
             }
 
             return response()
-                ->json(['statusCode' => 200, 'message' => 'Hi ' . $user->name . ', welcome to SAS APP', 'user' => $user->name, 'access_token' => $token, 'token_type' => 'Bearer',]);
+                ->json(['statusCode' => 200, 'message' => 'Habari ' . $user->name . ', karibu kwenye mfumo wa usajili wa shule', 'user' => $user->name, 'access_token' => $token, 'token_type' => 'Bearer',]);
         } catch (Exception $error) {
             return response()->json([
                 'statusCode' => 402,
@@ -154,7 +154,7 @@ class AuthenticationController extends Controller
 
         if ($verify == null) {
 
-            return "Account yako aitambuliki";
+            return "Akaunti yako aitambuliki";
         }
 
         $verify->email_verified_at = Carbon::now()->format('Y-m-d H:s:i');

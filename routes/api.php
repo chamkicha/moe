@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -62,7 +63,7 @@ Route::controller(MetaDataController::class)->group(function (){
     Route::get('ownership_types','ownership_types');
     Route::get('ownership_sub_types/{id?}','ownership_sub_types');
     Route::get('denominations/{id?}','denominations');
-
+    
     Route::post('add/institute-attachments','addInstituteAttachments');
     Route::post('add/attachments','addAttachments');
 
