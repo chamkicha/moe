@@ -14,7 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'barua_secret_key' => env('BARUA_SECRET_KEY' , 'xxxxxx'),
+    'barua_secret_key' => env('BARUA_SECRET_KEY' , ''),
+    'barua_base_url' => env('BARUA_BASE_URL' , 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

@@ -2,17 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class PDFController extends Controller
 {
 
-    public function generatePDF($trackingNumber, $name)
+    public function generatePDF($trackingNumber)
     {
         try {
+            // Check if this tracking number belong to this user
+            // $user = auth();
+            $name  = 'dhadahdha' ;//$user->name;
+            // $myApplication = Application::where('tracking_number' , $trackingNumber)->where('user_id' , $user->id)->first();
+            // if($myApplication){
+            //     // send request to api
+            // }else{
+            //     return response()->json([
+            //         'message' => 'Not Found'
+            //     ]);
+            // }
             // Step 1: Request Token
-            $base_url = "http://localhost:8087";
+            $base_url = config('app.barua_base_url');
             $tokenResponse = Http::post($base_url . '/BaruaAuthentication', [
                 'name' => $name,
                 'tracking_number' => $trackingNumber,
@@ -57,7 +70,7 @@ class PDFController extends Controller
                 header('Pragma: public');
                 // Close cURL
                 curl_close($ch);
-                echo $response;
+                return $response;
             }else{
                 return $responseToken;
             }
