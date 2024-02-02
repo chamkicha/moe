@@ -7,32 +7,62 @@ use Illuminate\Support\Facades\Http;
 
 class PDFController extends Controller
 {
-    
+
     public function generatePDF($trackingNumber, $name)
     {
-        // Step 1: Request Token
-        $tokenResponse = Http::post('http://41.59.227.219:8087/BaruaAuthentication', [
-            'name' => $name,
-            'tracking_number' => $trackingNumber,
-            'secret_key' => 'HszM7ncDpozchdgnZyqg9KDtN86kdNWQ',
-        ]);
+        try {
+            // Step 1: Request Token
+            $base_url = "http://localhost:8087";
+            $tokenResponse = Http::post($base_url . '/BaruaAuthentication', [
+                'name' => $name,
+                'tracking_number' => $trackingNumber,
+                'secret_key' => config('app.barua_secret_key'),
+            ]);
+            $responseToken = json_decode($tokenResponse, true);
+            if ($responseToken && $responseToken['success']) {
+                $token = $tokenResponse->json('token');
+                // Set up cURL
+                $ch = curl_init($base_url . "/barua/" . $trackingNumber);
 
-        // Check if the token request was successful
-        if ($tokenResponse->successful()) {
-            $token = $tokenResponse->json('token');
+                // Set cURL options
+                curl_setopt($ch,
+                    CURLOPT_RETURNTRANSFER,
+                    true
+                );
+                curl_setopt($ch,
+                    CURLOPT_CUSTOMREQUEST,
+                    'GET'
+                );
+                curl_setopt($ch,
+                    CURLOPT_POSTFIELDS,
+                    json_encode(['token' => $token])
+                );
+                curl_setopt($ch,
+                    CURLOPT_HTTPHEADER,
+                    [
+                        'Content-Type: application/json',
+                        'Accept: application/json',
+                    ]
+                );
 
-            // Step 3: Request PDF with Token
-            $pdfResponse = Http::withHeaders(['Authorization' => 'Bearer ' . $token])
-                ->get('http://41.59.227.219:8087/barua/' . $trackingNumber);
-
-            // Check if the PDF request was successful
-            if ($pdfResponse->successful()) {
-                // Return the PDF content or perform any further actions
-                return $pdfResponse->body();
+                // Execute cURL
+                $response = curl_exec($ch);
+                // Check for cURL errors
+                if (curl_errno($ch)) {
+                    echo 'cURL Error: ' . curl_error($ch);
+                }
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="'.$trackingNumber.'.pdf"');
+                header('Cache-Control: private, max-age=0, must-revalidate');
+                header('Pragma: public');
+                // Close cURL
+                curl_close($ch);
+                echo $response;
+            }else{
+                return $responseToken;
             }
+        } catch (\Throwable $th) {
+            return $th;
         }
-
-        // Handle token or PDF request failure
-        return response()->json(['error' => 'Failed to generate PDF'], 500);
     }
 }
