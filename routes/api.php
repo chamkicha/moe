@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('get/certificate/specialisations/{id?}', 'specialisation');
         Route::get('get/specialisation/combinations', 'combinations');
         Route::get('registered/schools', 'registeredSchools');
+        
     });
 
     Route::controller(governmentSchoolEstablishmentController::class)->group(function () {

@@ -42,5 +42,6 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
 
 
-Route::get('/CountApplications/user-applications-count', [CountApplicationsController::class, 'getUserApplicationsCount']);
+Route::get('/CountApplications/user-applications-count', [CountApplicationsController::class, 'getCountOfApplications']);
 Route::get('/generate-pdf/{tracking_number}', [PDFController::class, 'generatePDF']);
+

@@ -15,7 +15,7 @@ class PDFController extends Controller
         try {
             // Check if this tracking number belong to this user
             // $user = auth();
-            $name  = 'dhadahdha' ;//$user->name;
+            // $name  =$user->name;
             // $myApplication = Application::where('tracking_number' , $trackingNumber)->where('user_id' , $user->id)->first();
             // if($myApplication){
             //     // send request to api
@@ -27,7 +27,7 @@ class PDFController extends Controller
             // Step 1: Request Token
             $base_url = config('app.barua_base_url');
             $tokenResponse = Http::post($base_url . '/BaruaAuthentication', [
-                'name' => $name,
+                'name' => "james",
                 'tracking_number' => $trackingNumber,
                 'secret_key' => config('app.barua_secret_key'),
             ]);
