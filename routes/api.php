@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+use App\Http\Controllers\PDFController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -75,7 +75,7 @@ Route::middleware('auth:sanctum')->group( function () {
     });
 
     Route::post('logout', [AuthenticationController::class,'logout']);
-
+    Route::get('/generate-pdf/{tracking_number}', [PDFController::class, 'generatePDF']);
     Route::controller(schoolEstablishmentController::class)->group(function (){
         Route::post('payment/callback','paymentCallBack');
         Route::post('bill/payment/callback','billCallBack');
