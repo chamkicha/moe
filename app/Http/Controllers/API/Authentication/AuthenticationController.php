@@ -27,68 +27,63 @@ class AuthenticationController extends Controller
 
     public function register(Request $request): JsonResponse
     {
-        // Log::debug($request);
-        try{
-          
-        DB::beginTransaction();
-            
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|confirmed|min:8'
-        ]);
+        try {
+            DB::beginTransaction();
+                
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255',
+                'password' => 'required|string|confirmed|min:8'
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+            if ($validator->fails()) {
+                Log::error('Registration validation failed.', ['errors' => $validator->errors()]);
+                return response()->json($validator->errors());
+            }
 
-        $check = User::where('email', '=', $request->input('email'))->first();
+            $check = User::where('email', '=', $request->input('email'))->first();
 
-        if ($check != null) {
+            if ($check != null) {
+                $response = ['statusCode' => 0, 'message' => 'Barua pepe yako tayari imetumika kwenye mfumo, tafadhali tumia barua pepe nyingine'];
+                Log::info('Email already exists during registration.', ['email' => $request->input('email')]);
+                return response()->json($response, 200);
+            }
 
-            $response = ['statusCode' => 0, 'message' => 'Barua pepe yako tayari imetumika kwenye mfumo,tafadhali tumia barua pepe nyingine'];
-            return response()->json($response, 200);
-        }
+            $user = User::create([
+                'secure_token' => Str::random(40),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password)
+            ]);
 
-        $user = User::create([
-            'secure_token' => Str::random(40),
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
+            $this->basic_email($user);
+            DB::commit();
 
-        $this->basic_email($user);
-        DB::commit();
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()
-            ->json(['statusCode' => 1, 'message' => 'Umefanikiwa kujisajili kikamilifu,tafadhali nenda kwenye barua pepe yako kuweza kuakiki', 'data' => $user, 'access_token' => $token, 'token_type' => 'Bearer',]);
-       
+            Log::info('User registered successfully.', ['user_id' => $user->id, 'email' => $user->email]);
+            return response()
+                ->json(['statusCode' => 1, 'message' => 'Umefanikiwa kujisajili kikamilifu, tafadhali nenda kwenye barua pepe yako kuweza kuakiki', 'data' => $user, 'access_token' => $token, 'token_type' => 'Bearer',]);
         } catch (Exception $error) {
             DB::rollback();
+            Log::error('Error occurred while registering.', ['error' => $error]);
             return response()->json([
                 'statusCode' => 0,
                 'message' => 'Error occurred while logging in.',
                 'error' => $error,
             ]);
         }
-    
     }
 
-    /**
-     * @throws ValidationException
-     * @throws Exception
-     */
     public function login(Request $request): JsonResponse
     {
-        //  \Log::info($request->email);
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         if ($validator->fails()) {
+            Log::error('Login validation failed.', ['errors' => $validator->errors()]);
             return response()->json($validator->errors());
         }
 
@@ -97,14 +92,11 @@ class AuthenticationController extends Controller
 
             if (!Auth::attempt($request->only('email', 'password'))) {
                 RateLimiter::hit($this->throttleKey());
-
-
+                Log::info('Authentication failed.', ['email' => $request->email]);
                 return response()->json([
                     'statusCode' => 401,
                     'message' => 'Samahani umekosea nywila au barua pepe',
                 ]);
-            //            return response()
-            //                ->json(['statusCode' => 401, 'message' => 'Unauthorized'], 401);
             }
 
             RateLimiter::clear($this->throttleKey());
@@ -112,7 +104,7 @@ class AuthenticationController extends Controller
             $user = User::where('email', $request['email'])->firstOrFail();
 
             if ($user->email_verified_at == null) {
-
+                Log::info('User tried to login without verifying email.', ['email' => $request->email]);
                 return response()->json(['statusCode' => 401, 'message' => 'Samahani hakiki barua pepe yako ili uweze kuendelea'], 401);
             }
 
@@ -124,7 +116,6 @@ class AuthenticationController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             if ($incomplete > 0) {
-
                 $response = [
                     'statusCode' => 200,
                     'message' => 'Habari ' . $user->name . ', karibu kwenye mfumo wa SAS, Samahani una maombi ' . $incomplete . ' haujakamilisha kuweka viambatanisho tafadhali nenda kwenye orodha yako ya maombi kamilisha au futa kama huna kazi nayo tena maombi hayo ili uweze kuanzisha shule ingine, ahsante',
@@ -132,13 +123,15 @@ class AuthenticationController extends Controller
                     'access_token' => $token,
                     'token_type' => 'Bearer'
                 ];
-
+                Log::info('User logged in successfully with incomplete applications.', ['user_id' => $user->id]);
                 return response()->json($response, 200);
             }
 
+            Log::info('User logged in successfully.', ['user_id' => $user->id]);
             return response()
                 ->json(['statusCode' => 200, 'message' => 'Habari ' . $user->name . ', karibu kwenye mfumo wa usajili wa shule', 'user' => $user->name, 'access_token' => $token, 'token_type' => 'Bearer',]);
         } catch (Exception $error) {
+            Log::error('Error occurred while logging in.', ['error' => $error]);
             return response()->json([
                 'statusCode' => 402,
                 'message' => 'Error occurred while logging in.',
@@ -149,21 +142,19 @@ class AuthenticationController extends Controller
 
     public function verifyEmail($token): string
     {
-
         $verify = User::where('secure_token', '=', $token)->first();
 
         if ($verify == null) {
-
             return "Akaunti yako aitambuliki";
         }
 
         $verify->email_verified_at = Carbon::now()->format('Y-m-d H:s:i');
         $verify->save();
 
+        Log::info('User email verified successfully.', ['user_id' => $verify->id, 'email' => $verify->email]);
         return "Barua pepe yako imethibitishwa kikamilifu, unaweza kurudi kwenye mfumo na kuendelea";
     }
 
-    // method for user logout and delete token
     public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
@@ -171,12 +162,12 @@ class AuthenticationController extends Controller
         $response = [
             'message' => 'You have successfully logged out and the token was successfully deleted'
         ];
+        Log::info('User logged out successfully.', ['user_id' => auth()->user()->id]);
         return response()->json($response, 200);
     }
 
     private function basic_email($user)
     {
-
         $details = [
             'title' => 'Hakiki Barua pepe yako',
             'body' => 'Samahani unatakiwa kubonyeza kitufe apo chini ili kuthibitisha uwalali wa barua pepe yako',
@@ -186,28 +177,18 @@ class AuthenticationController extends Controller
         Mail::to($user->email)->send(new SendEmailToRegisteredUser($details));
     }
 
-    /**
-     * Get the rate limiting throttle key for the request.
-     *
-     * @return string
-     */
     public function throttleKey(): string
     {
         return Str::lower(request('email')) . '|' . request()->ip();
     }
 
-    /**
-     * Ensure the login request is not rate limited.
-     *
-     * @return void
-     * @throws Exception
-     */
     public function checkTooManyFailedAttempts()
     {
         if (!RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
             return;
         }
 
+        Log::warning('IP address banned due to too many login attempts.', ['ip' => request()->ip()]);
         throw new ValidationException('IP address banned. Too many login attempts.');
     }
 }

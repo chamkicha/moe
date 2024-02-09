@@ -77,6 +77,7 @@ class governmentSchoolEstablishmentController extends Controller
             'stage' => 3,
             'file_number' => generateFileNumber(3,$request->input('school_category')),
             'school_folio' => 1,
+            'payment_status_id'=>2,
             'max_folio' => 1
         ]);
 

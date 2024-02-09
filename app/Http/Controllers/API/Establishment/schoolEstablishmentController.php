@@ -139,7 +139,8 @@ class schoolEstablishmentController extends Controller
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
             'village_id' => $request->input('village_id'),
-
+            'school_address'=>$request->input('address'),
+            'po_box'=>$request->input('box'),
             'registration_structure_id' => $request->input('registration_structure'),
             'stage' => 1,
             'file_number' => generateFileNumber($registry->id,$request->input('school_category')),
