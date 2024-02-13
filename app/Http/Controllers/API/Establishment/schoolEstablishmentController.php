@@ -32,7 +32,7 @@ class schoolEstablishmentController extends Controller
 {
     public function establishSchool(Request $request)
     {
-        //    Log::debug($request);
+           Log::debug($request);
         //    dd($request);
     //  try{
         $validator = Validator::make($request->all(), [
@@ -342,7 +342,7 @@ class schoolEstablishmentController extends Controller
             'school_phone' => $request->input('school_phone'),
             'school_email' => $request->input('school_email'),
             'area' => $request->input('area'),
-            'po_box' => $request->input('po_box'),
+            'po_box' => $request->input('box'),
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
@@ -365,6 +365,7 @@ class schoolEstablishmentController extends Controller
                 'personal_id_number' => $request->input('personal_id_number'),
                 'personal_address' => $request->input('personal_address'),
                 'ward_id' => $request->input('ward_of_person'),
+                'box' => $request->input('box'),
             ]);
 
             $school_registry = School_registry::create([

@@ -17,7 +17,7 @@ class governmentSchoolEstablishmentController extends Controller
 {
     public function governmentEstablishment(Request $request): JsonResponse
     {
-        // Log::debug($request);
+        Log::debug($request);
 
         // try{
 
@@ -62,7 +62,7 @@ class governmentSchoolEstablishmentController extends Controller
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
-            'village_id' => $request->input('village_id'),
+            'village_id' => $request->input('street'),
             'registration_structure_id' => $request->input('registration_structure'),
             'stream' => $request->input('stream'),
             'website' => $request->input('website'),
@@ -79,8 +79,9 @@ class governmentSchoolEstablishmentController extends Controller
             'school_folio' => 1,
             'payment_status_id'=>2,
             'max_folio' => 1
+            
         ]);
-
+    
         $owner_data = [
             'secure_token' => Str::random(40),
             'owner_name' => $request->input('owner_name')
