@@ -196,6 +196,7 @@ class schoolEstablishmentController extends Controller
                 'registration_certificate_copy' => $request->input('registration_certificate_copy'),
                 'organizational_constitution' => $request->input('organizational_constitution'),
                 'agreement_document' => $request->input('agreement_document'),
+                'institute_address' => $request->input('box'),
                 'address' => $request->input('address')
             ]);
 
@@ -222,6 +223,7 @@ class schoolEstablishmentController extends Controller
                 'application_category_id' => $request->input('application_category'),
                 'tracking_number' => generateTrackingNumber($request->input('school_category')),
                 'registry_type_id' => $request->input('registry_type'),
+                'folio'=>1
             ];
 
             // $this->saveAttachments($request->institute_attachments, $applicaion_data['tracking_number']);
@@ -399,6 +401,7 @@ class schoolEstablishmentController extends Controller
                 'registration_certificate_copy' => $request->input('registration_certificate_copy'),
                 'organizational_constitution' => $request->input('organizational_constitution'),
                 'agreement_document' => $request->input('agreement_document'),
+                'institute_address'=>$request->input('box'),
                 'address' => $request->input('address')
             ]);
 
