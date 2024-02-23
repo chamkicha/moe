@@ -944,7 +944,8 @@ class changeRequestController extends Controller
             'application_category_id' => $request->input('application_category'),
             'tracking_number' => generateTrackingNumber($school->school_category_id),
             'registry_type_id' => $application->registry_type,
-            'folio' => $school->max_folio + 1
+            'folio' => $school->max_folio + 1,
+            'payment_status_id' => 2,
         ]);
 
 
