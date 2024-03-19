@@ -33,7 +33,7 @@ class schoolEstablishmentController extends Controller
     public function establishSchool(Request $request)
     {
            Log::debug($request);
-        //    dd($request);
+            // dd($request);
     //  try{
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
@@ -185,30 +185,41 @@ class schoolEstablishmentController extends Controller
 
         } elseif ($registry->registry == "Taasisi/Kampuni/NGO") {
 
-            $institute_info = Institute_info::create([
-                'secure_token' => Str::random(40),
-                'name' => $request->input('name'),
-                'registration_number' => $request->input('registration_number'),
-                'institute_email' => $request->input('institute_email'),
-                'institute_phone' => $request->input('institute_phone'),
-                'box' => $request->input('box'),
-                'ward_id' => $request->input('ward'),
-                'registration_certificate_copy' => $request->input('registration_certificate_copy'),
-                'organizational_constitution' => $request->input('organizational_constitution'),
-                'agreement_document' => $request->input('agreement_document'),
-                'institute_address' => $request->input('box'),
-                'address' => $request->input('address')
-            ]);
+            try {
+                $institute_info = Institute_info::create([
+                    'secure_token' => Str::random(40),
+                    'name' => $request->input('name'),
+                    'registration_number' => $request->input('registration_number'),
+                    'institute_email' => $request->input('institute_email'),
+                    'institute_phone' => $request->input('institute_phone'),
+                    'box' => $request->input('box'),
+                    'ward_id' => $request->input('ward'),
+                    'street' => $request->input('village_id'),
+                    'registration_certificate_copy' => $request->input('registration_certificate_copy'),
+                    'organizational_constitution' => $request->input('organizational_constitution'),
+                    'agreement_document' => $request->input('agreement_document'),
+                    'institute_address' => $request->input('box'),
+                    'address' => $request->input('address')
+                ]);
+                foreach ($request->institute_attachments as $attachment) {
 
-            foreach ($request->institute_attachments as $attachment) {
-
-                $inst_attachment = [
-                    'attachment_type_id' => $attachment['attachment_type'],
-                    'attachment' => $attachment['attachment_path'],
-                ];
-
-                $institute_info->attachments()->updateOrCreate($inst_attachment);
+                    $inst_attachment = [
+                        'attachment_type_id' => $attachment['attachment_type'],
+                        'attachment' => $attachment['attachment_path'],
+                    ];
+    
+                    $institute_info->attachments()->updateOrCreate($inst_attachment);
+                }
+            
+                // Log successful insertion
+                Log::info('New institute information inserted:', $institute_info->toArray());
+            } catch (\Exception $e) {
+                // Log error if insertion fails
+                Log::error('Error inserting institute information: ' . $e->getMessage());
+                // Handle the error as needed, maybe return a response indicating failure
             }
+            
+            
 
 
 
@@ -269,7 +280,7 @@ class schoolEstablishmentController extends Controller
             'school_sub_category' => 'required|integer',
             'language' => 'required|integer',
             'building_structure' => 'required|integer',
-            'ward' => 'required',
+            'ward' => 'required|string',
             'registration_structure' => 'required|integer',
         ]);
 
@@ -397,12 +408,12 @@ class schoolEstablishmentController extends Controller
                 'institute_email' => $request->input('institute_email'),
                 'institute_phone' => $request->input('institute_phone'),
                 'box' => $request->input('box'),
-                'ward_id' => $request->input('ward'),
                 'registration_certificate_copy' => $request->input('registration_certificate_copy'),
                 'organizational_constitution' => $request->input('organizational_constitution'),
                 'agreement_document' => $request->input('agreement_document'),
                 'institute_address'=>$request->input('box'),
-                'address' => $request->input('address')
+                'address' => $request->input('address'),
+                'ward_id' => $request->input('ward')
             ]);
 
             foreach ($request->institute_attachments as $attachment) {

@@ -15,11 +15,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class schoolRegistrationController extends Controller
 {
     public function registerSchool(Request $request): JsonResponse
     {
+        Log::debug($request);
+
+        Log::info('Registering school...');
 
         $validator = Validator::make($request->all(), [
             'school' => 'required|integer',
@@ -38,16 +42,20 @@ class schoolRegistrationController extends Controller
             'disabled' => 'required',
 //            'school_specialisation' => 'required|array',
         ]);
-
+    
         if ($validator->fails()) {
+            Log::error('Validation failed', ['errors' => $validator->errors()]);
             return response()->json($validator->errors());
         }
 
-
         $school = Establishing_school::find($request->input('school'));
+        if (!$school) {
+            Log::error('School not found');
+            return response()->json(['error' => 'School not found'], 404);
+        }
 
         $applicant = Application::where('tracking_number', '=', $school->tracking_number)->first();
-
+        Log::info('Updating school details...');
         $school->update([
             'stream' => $request->input('stream'),
             'website' => $request->input('website'),
@@ -105,7 +113,7 @@ class schoolRegistrationController extends Controller
             'payment_status_id' => 2,  //bypass payment
             'folio' => $school->max_folio + 1
         ]);
-
+      
         $school->update([
             'max_folio' => $application->folio
         ]);
@@ -113,27 +121,26 @@ class schoolRegistrationController extends Controller
         $register->update([
             'tracking_number' => $application->tracking_number,
         ]);
-
+        Log::info('School registered successfully');
         $response = ['message' => 'Ombi la kusajili shule limetumwa kikamilifu'];
         return response()->json($response, 200);
-
     }
 
     public function certificateTypesPerSchool($id): JsonResponse
     {
+        Log::info('Fetching certificate types for school with ID: ' . $id);
 
         $school = Establishing_school::find($id);
-
         $certificate = Certificate_type::where('school_category_id', '=', $school->school_category_id)->get();
 
         $response = ['certificate' => $certificate];
 
         return response()->json($response, 200);
-
     }
 
     public function specialisation($id): JsonResponse
     {
+        Log::info('Fetching specializations for certificate type with ID: ' . $id);
 
         $specialisations = School_specialization::where('certificate_type_id', '=', $id)->get();
 
@@ -144,9 +151,9 @@ class schoolRegistrationController extends Controller
 
     public function combinations(Request $request): JsonResponse
     {
+        Log::info('Fetching combinations');
 
         $array = $request->input('combinations');
-
         $combinations = Combination::whereIn('school_specialization_id', $array)->get();
 
         $response = ['combinations' => $combinations];
@@ -155,15 +162,14 @@ class schoolRegistrationController extends Controller
 
     public function registeredSchools(): JsonResponse
     {
+        Log::info('Fetching registered schools for the current user');
 
         $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
                 'village.ward.district.region',
-                // 'ward.district.region',
-                // 'village',
                 'category' => function($query){
-                $query->select('id','category');
+                    $query->select('id','category');
                 },
                 'subcategory' => function($query){
                     $query->select('id','subcategory');
@@ -179,5 +185,4 @@ class schoolRegistrationController extends Controller
 
         return response()->json($response,200);
     }
-
 }
