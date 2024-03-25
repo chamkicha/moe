@@ -185,4 +185,34 @@ class schoolRegistrationController extends Controller
 
         return response()->json($response,200);
     }
+    public function registeredSchoolsExceptAwali(): JsonResponse
+    {
+        Log::info('Fetching registered schools for the current user');
+    
+        $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
+            ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
+            ->with([
+                'village.ward.district.region',
+                'category' => function($query){
+                    $query->select('id','category');
+                },
+                'subcategory' => function($query){
+                    $query->select('id','subcategory');
+                }
+            ])
+            ->where('applications.user_id','=',auth()->user()->id)
+            ->where('applications.is_approved', '=', 2)
+            ->where('school_registrations.reg_status', '=', 1)
+            ->where('establishing_schools.school_category_id', '!=', 1) // Exclude schools with school_category_id = 1
+            ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id', 'establishing_schools.village_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
+            ->get();
+    
+        $response = ['registered_schools' => $registered_schools];
+    
+        return response()->json($response,200);
+    }
+    
+
 }
+
+
