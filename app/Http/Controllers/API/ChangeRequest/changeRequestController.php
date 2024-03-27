@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
 
 class changeRequestController extends Controller
 {
+    
     public function sendChangeRequest(Request $request): JsonResponse
     {
            Log::debug($request);
@@ -45,6 +46,7 @@ class changeRequestController extends Controller
         $school = Establishing_school::find($request->input('school'));
 
         $application = Application::where('tracking_number', '=', $school->tracking_number)->first();
+        Log::debug($application);
 
         if ($application_category->application_code == "KM" | $application_category->application_code == "KAU" | $application_category->application_code == "KUS" | $application_category->application_code == "KMS" | $application_category->application_code == "KUJS" | $application_category->application_code == "KHS" | $application_category->application_code == "KFS" | $application_category->application_code == "KUT" | $application_category->application_code == "KUD" | $application_category->application_code == "KOB") {
 
@@ -358,9 +360,10 @@ class changeRequestController extends Controller
                     'user_id' => auth()->user()->id,
                     'application_category_id' => $request->input('application_category'),
                     'tracking_number' => generateTrackingNumber($school->school_category_id),
-                    'registry_type_id' => $application->registry_type,
+                    'registry_type_id' => $application->registry_type_id,
+                    'folio' => $school->max_folio + 1,
                 ]);
-
+                log:debug($appRequest);
                 $manager->update([
                     'tracking_number' => $appRequest->tracking_number
                 ]);
@@ -943,12 +946,12 @@ class changeRequestController extends Controller
             'user_id' => auth()->user()->id,
             'application_category_id' => $request->input('application_category'),
             'tracking_number' => generateTrackingNumber($school->school_category_id),
-            'registry_type_id' => $application->registry_type,
+            'registry_type_id' => $application->registry_type_id,
             'folio' => $school->max_folio + 1,
             'payment_status_id' => 2,
         ]);
 
-
+        Log::debug($appRequest);
         $school->update([
             'max_folio' => $appRequest->folio
         ]);
