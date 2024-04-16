@@ -155,15 +155,14 @@ class schoolRegistrationController extends Controller
 
     public function registeredSchools(): JsonResponse
     {
+        Log::info('Fetching registered schools for the current user');
 
         $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
                 'village.ward.district.region',
-                // 'ward.district.region',
-                // 'village',
                 'category' => function($query){
-                $query->select('id','category');
+                    $query->select('id','category');
                 },
                 'subcategory' => function($query){
                     $query->select('id','subcategory');
