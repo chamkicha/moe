@@ -10,13 +10,11 @@ use Illuminate\Support\Facades\Http;
 class PDFController extends Controller
 {
 
-    public function generatePDF($trackingNumber, Request $request)
+    public function generatePDF($trackingNumber)
     {
         try {
             // Step 1: Request Token
             $base_url = config('app.barua_base_url');
-            $type = $request->input('type'); // Get the type parameter from the request
-
             $tokenResponse = Http::post($base_url . '/BaruaAuthentication', [
                 'name' => "james",
                 'tracking_number' => $trackingNumber,
@@ -34,12 +32,6 @@ class PDFController extends Controller
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['token' => $token]));
-
-                // If type parameter is provided, append it to the URL
-                if ($type) {
-                    curl_setopt($ch, CURLOPT_URL, $base_url . "/barua/" . $trackingNumber . '?type=' . $type);
-                }
-
                 curl_setopt($ch, CURLOPT_HTTPHEADER, [
                     'Content-Type: application/json',
                     'Accept: application/json',
@@ -59,7 +51,8 @@ class PDFController extends Controller
     
                 // Return the PDF as a response
                 return response($pdfContent)
-                    ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Origin', '*')
+              
                     ->header('Content-Type', 'application/pdf');
                     // ->header('Content-Disposition', 'inline; filename="' . $trackingNumber . '.pdf"');
             }

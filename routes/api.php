@@ -76,7 +76,6 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::post('logout', [AuthenticationController::class,'logout']);
     Route::get('/generate-pdf/{tracking_number}', [PDFController::class, 'generatePDF']);
-
     Route::controller(schoolEstablishmentController::class)->group(function (){
         Route::post('payment/callback','paymentCallBack');
         Route::post('bill/payment/callback','billCallBack');
@@ -111,7 +110,6 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('get/certificate/specialisations/{id?}', 'specialisation');
         Route::get('get/specialisation/combinations', 'combinations');
         Route::get('registered/schools', 'registeredSchools');
-        Route::get('registered2/schools', 'registeredSchoolsExceptAwali');
         
     });
 

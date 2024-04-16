@@ -125,7 +125,7 @@ class governmentSchoolEstablishmentController extends Controller
                 $register->combination()->updateOrCreate($comb_data);
             }
         }
-      
+
         $application = Application::create([
             'secure_token' => Str::random(40),
             'foreign_token' => Str::random(40),
@@ -133,8 +133,7 @@ class governmentSchoolEstablishmentController extends Controller
             'user_id' => auth()->user()->id,
             'registry_type_id' => 3,
             'application_category_id' => 4,
-            'payment_status_id' => 2,
-            'folio' => rand(0, 100)
+            'folio' => 1
         ]);
 
         $school->update([
