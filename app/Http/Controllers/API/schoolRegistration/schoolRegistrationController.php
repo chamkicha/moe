@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Log;
 class schoolRegistrationController extends Controller
 {
     public function registerSchool(Request $request): JsonResponse
