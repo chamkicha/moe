@@ -19,7 +19,7 @@ class Institute_info extends Model
         'institute_email',
         'institute_phone',
         'box',
-        'ward_id',
+        'ward',
         'street',
         'registration_certificate_copy',
         'organizational_constitution',

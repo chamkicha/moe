@@ -16,14 +16,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-
 class schoolRegistrationController extends Controller
 {
     public function registerSchool(Request $request): JsonResponse
     {
-        // Log::debug($request);
-
-        Log::info('Registering school...');
 
         $validator = Validator::make($request->all(), [
             'school' => 'required|integer',
@@ -42,20 +38,16 @@ class schoolRegistrationController extends Controller
             'disabled' => 'required',
 //            'school_specialisation' => 'required|array',
         ]);
-    
+
         if ($validator->fails()) {
-            Log::error('Validation failed', ['errors' => $validator->errors()]);
             return response()->json($validator->errors());
         }
 
+
         $school = Establishing_school::find($request->input('school'));
-        if (!$school) {
-            Log::error('School not found');
-            return response()->json(['error' => 'School not found'], 404);
-        }
 
         $applicant = Application::where('tracking_number', '=', $school->tracking_number)->first();
-        Log::info('Updating school details...');
+
         $school->update([
             'stream' => $request->input('stream'),
             'website' => $request->input('website'),
@@ -113,7 +105,7 @@ class schoolRegistrationController extends Controller
             'payment_status_id' => 2,  //bypass payment
             'folio' => $school->max_folio + 1
         ]);
-      
+
         $school->update([
             'max_folio' => $application->folio
         ]);
@@ -121,26 +113,27 @@ class schoolRegistrationController extends Controller
         $register->update([
             'tracking_number' => $application->tracking_number,
         ]);
-        Log::info('School registered successfully');
+
         $response = ['message' => 'Ombi la kusajili shule limetumwa kikamilifu'];
         return response()->json($response, 200);
+
     }
 
     public function certificateTypesPerSchool($id): JsonResponse
     {
-        Log::info('Fetching certificate types for school with ID: ' . $id);
 
         $school = Establishing_school::find($id);
+
         $certificate = Certificate_type::where('school_category_id', '=', $school->school_category_id)->get();
 
         $response = ['certificate' => $certificate];
 
         return response()->json($response, 200);
+
     }
 
     public function specialisation($id): JsonResponse
     {
-        Log::info('Fetching specializations for certificate type with ID: ' . $id);
 
         $specialisations = School_specialization::where('certificate_type_id', '=', $id)->get();
 
@@ -151,9 +144,9 @@ class schoolRegistrationController extends Controller
 
     public function combinations(Request $request): JsonResponse
     {
-        Log::info('Fetching combinations');
 
         $array = $request->input('combinations');
+
         $combinations = Combination::whereIn('school_specialization_id', $array)->get();
 
         $response = ['combinations' => $combinations];
@@ -162,41 +155,8 @@ class schoolRegistrationController extends Controller
 
     public function registeredSchools(): JsonResponse
     {
-        try {
-            Log::info('Fetching registered schools for the current user');
-    
-            $registered_schools = Establishing_school::leftJoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
-                ->leftJoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
-                ->with([
-                    'village.ward.district.region',
-                    'category' => function ($query) {
-                        $query->select('id', 'category');
-                    },
-                    'subcategory' => function ($query) {
-                        $query->select('id', 'subcategory');
-                    }
-                ])
-                ->where('applications.user_id', '=', auth()->user()->id)
-                ->where('applications.is_approved', '=', 2)
-                ->where('school_registrations.reg_status', '=', 1)
-                ->select('establishing_schools.id', 'establishing_schools.school_name', 'establishing_schools.ward_id', 'establishing_schools.village_id', 'establishing_schools.stream', 'school_registrations.school_opening_date', 'school_registrations.registration_number', 'establishing_schools.school_category_id', 'establishing_schools.school_sub_category_id', 'school_registrations.is_seminary', 'school_registrations.level_of_education')
-                ->get();
-    
-            $response = ['registered_schools' => $registered_schools];
-    
-            return response()->json($response, 200);
-        } catch (\Exception $e) {
-            // Log the error
-            Log::error('Error fetching registered schools: ' . $e->getMessage());
-            
-            // Return an error response
-            return response()->json(['error' => 'An error occurred while fetching registered schools. Please try again later.'], 500);
-        }
-    }
-    public function registeredSchoolsExceptAwali(): JsonResponse
-    {
         Log::info('Fetching registered schools for the current user');
-    
+
         $registered_schools = Establishing_school::leftjoin('school_registrations', 'establishing_schools.id', '=', 'school_registrations.establishing_school_id')
             ->leftjoin('applications', 'school_registrations.tracking_number', '=', 'applications.tracking_number')
             ->with([
@@ -211,16 +171,12 @@ class schoolRegistrationController extends Controller
             ->where('applications.user_id','=',auth()->user()->id)
             ->where('applications.is_approved', '=', 2)
             ->where('school_registrations.reg_status', '=', 1)
-            ->where('establishing_schools.school_category_id', '!=', 1) // Exclude schools with school_category_id = 1
             ->select('establishing_schools.id','establishing_schools.school_name','establishing_schools.ward_id', 'establishing_schools.village_id','establishing_schools.stream','school_registrations.school_opening_date','school_registrations.registration_number','establishing_schools.school_category_id','establishing_schools.school_sub_category_id','school_registrations.is_seminary','school_registrations.level_of_education')
             ->get();
-    
+
         $response = ['registered_schools' => $registered_schools];
-    
+
         return response()->json($response,200);
     }
-    
 
 }
-
-
