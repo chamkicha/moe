@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CountApplicationsController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\LogController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -48,4 +49,6 @@ Route::get('/CountApplications/user-applications-count', [CountApplicationsContr
 Route::get('/CountApplications/changerequests', [CountApplicationsController::class, 'getChangerequests']);
 
 Route::get('/generate-pdf/{tracking_number}', [PDFController::class, 'generatePDF']);
+
+Route::get('/view-log',[LogController::class,'viewLog'])->name('view-log');
 
