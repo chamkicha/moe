@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class PDFController extends Controller
 {
 
-    public function generatePDF($trackingNumber)
+    public function generatePDF($trackingNumber, $type)
     {
         try {
             // Step 1: Request Token
@@ -21,12 +21,18 @@ class PDFController extends Controller
                 'secret_key' => config('app.barua_secret_key'),
             ]);
     
+            // Log token request
+            \Log::info('Token request sent', ['tracking_number' => $trackingNumber, 'type' => $type]);
+    
             $responseToken = json_decode($tokenResponse, true);
             if ($responseToken && $responseToken['success']) {
                 $token = $tokenResponse->json('token');
     
                 // Set up cURL
-                $ch = curl_init($base_url . "/barua/" . $trackingNumber);
+                $ch = curl_init($base_url . "/barua/" . $trackingNumber . "?type=" . $type);
+    
+                // Log cURL request
+                \Log::info('cURL request sent', ['url' => $base_url . "/barua/" . $trackingNumber . "?type=" . $type]);
     
                 // Set cURL options
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -42,21 +48,25 @@ class PDFController extends Controller
     
                 // Check for cURL errors
                 if (curl_errno($ch)) {
-                    echo 'cURL Error: ' . curl_error($ch);
+                    \Log::error('cURL Error: ' . curl_error($ch));
                     // Handle the error appropriately
                 }
     
                 // Close cURL
                 curl_close($ch);
     
+                // Log cURL response
+               
+    
                 // Return the PDF as a response
                 return response($pdfContent)
-                ->header('Access-Control-Allow-Origin', '*')
-              
+                    ->header('Access-Control-Allow-Origin', '*')
                     ->header('Content-Type', 'application/pdf');
-                    // ->header('Content-Disposition', 'inline; filename="' . $trackingNumber . '.pdf"');
+                // ->header('Content-Disposition', 'inline; filename="' . $trackingNumber . '.pdf"');
             }
         } catch (\Throwable $th) {
+            // Log any exceptions
+            \Log::error('An error occurred', ['message' => $th->getMessage()]);
             return response()->json([
                 'error' => 'An error occurred',
                 'message' => $th->getMessage(),

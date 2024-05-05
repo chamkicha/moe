@@ -47,5 +47,5 @@ Route::get('/CountApplications/user-applications-count', [CountApplicationsContr
 
 Route::get('/CountApplications/changerequests', [CountApplicationsController::class, 'getChangerequests']);
 
-Route::get('/generate-pdf/{tracking_number}', [PDFController::class, 'generatePDF']);
+Route::get('/generate-pdf/{tracking_number}/{type}', [PDFController::class, 'generatePDF']);
 
