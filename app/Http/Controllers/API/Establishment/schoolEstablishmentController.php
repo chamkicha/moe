@@ -160,7 +160,7 @@ class schoolEstablishmentController extends Controller
                 'personal_phone_number' => $request->input('personal_phone_number'),
                 'identity_type_id' => $request->input('personal_identity_type'),
                 'personal_id_number' => $request->input('personal_id_number'),
-                'personal_address' => $request->input('personal_address'),
+                'personal_address' => rand(123, 1200),
                 'ward_id' => $request->input('ward_of_person'),
             ]);
 
@@ -192,12 +192,15 @@ class schoolEstablishmentController extends Controller
                 'institute_email' => $request->input('institute_email'),
                 'institute_phone' => $request->input('institute_phone'),
                 'box' => $request->input('box'),
-                'ward_id' => $request->input('ward'),
+                'ward_id' => $request->input('ward_of_person'),
                 'registration_certificate_copy' => $request->input('registration_certificate_copy'),
                 'organizational_constitution' => $request->input('organizational_constitution'),
                 'agreement_document' => $request->input('agreement_document'),
-                'address' => $request->input('address')
+                'address' => $request->input('address'),
+                'street'=>$request->input('personal_address')
             ]);
+            Log::info('Inserted into Institute_info table', ['data' => $institute_info]);
+            
 
             foreach ($request->institute_attachments as $attachment) {
 
@@ -342,7 +345,7 @@ class schoolEstablishmentController extends Controller
             'school_phone' => $request->input('school_phone'),
             'school_email' => $request->input('school_email'),
             'area' => $request->input('area'),
-            'po_box' => $request->input('box'),
+            'po_box' =>rand(123, 1200),
             'language_id' => $request->input('language'),
             'building_structure_id' => $request->input('building_structure'),
             'ward_id' => $request->input('ward'),
@@ -363,9 +366,9 @@ class schoolEstablishmentController extends Controller
                 'personal_phone_number' => $request->input('personal_phone_number'),
                 'identity_type_id' => $request->input('personal_identity_type'),
                 'personal_id_number' => $request->input('personal_id_number'),
-                'personal_address' => $request->input('personal_address'),
+                'personal_address' => $request->input('box'),
                 'ward_id' => $request->input('ward_of_person'),
-                'box' => $request->input('box'),
+                
             ]);
 
             $school_registry = School_registry::create([
@@ -395,11 +398,12 @@ class schoolEstablishmentController extends Controller
                 'institute_email' => $request->input('institute_email'),
                 'institute_phone' => $request->input('institute_phone'),
                 'box' => $request->input('box'),
-                'ward_id' => $request->input('ward'),
+                'ward_id' => $request->input('ward_of_person'),
                 'registration_certificate_copy' => $request->input('registration_certificate_copy'),
                 'organizational_constitution' => $request->input('organizational_constitution'),
                 'agreement_document' => $request->input('agreement_document'),
-                'address' => $request->input('address')
+                'address' => $request->input('address'),
+                'street'=>$request->input('personal_address')
             ]);
 
             foreach ($request->institute_attachments as $attachment) {
@@ -411,6 +415,7 @@ class schoolEstablishmentController extends Controller
                 ];
 
                 $institute_info->attachments()->updateOrCreate($inst_attachment);
+                Log::info('Inserted into Institute_info table', ['data' => $institute_info]);
             }
 
             $tracking_number = $request->input('tracking_number');

@@ -24,7 +24,8 @@ class Institute_info extends Model
         'registration_certificate_copy',
         'organizational_constitution',
         'agreement_document',
-        'address'
+        'address',
+        'ward_id'
     ];
 
     public function establish(): BelongsToMany
