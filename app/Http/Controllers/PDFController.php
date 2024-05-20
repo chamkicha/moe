@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class PDFController extends Controller
 {
 
-    public function generatePDF($trackingNumber, $type)
+    public function generatePDF($trackingNumber, $type=null)
     {
         try {
             // Step 1: Request Token
@@ -29,7 +29,12 @@ class PDFController extends Controller
                 $token = $tokenResponse->json('token');
     
                 // Set up cURL
+                if($type==null){
+                    $ch = curl_init($base_url . "/barua/" . $trackingNumber);
+                }else{
+
                 $ch = curl_init($base_url . "/barua/" . $trackingNumber . "?type=" . $type);
+                }
     
                 // Log cURL request
                 \Log::info('cURL request sent', ['url' => $base_url . "/barua/" . $trackingNumber . "?type=" . $type]);
