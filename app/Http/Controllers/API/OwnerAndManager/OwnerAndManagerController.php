@@ -15,13 +15,14 @@ use App\Models\Establishing_school;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\Attachment;
 class OwnerAndManagerController extends Controller
 {
     public function ownerApplication(Request $request): JsonResponse
     {
 
         try {
+            
             DB::beginTransaction();
             // Log::info($request->school);
             $validator = Validator::make($request->all(), [
@@ -56,6 +57,8 @@ class OwnerAndManagerController extends Controller
                 'manager_cv' => 'required',
                 'manager_certificate' => 'required',
                 'is_manager' => 'required',
+                'AfisaAfyaHalmashauri' => 'required|string',
+                'MuhandisiUjenzi' => 'required|string',
             ]);
 
 
@@ -122,6 +125,28 @@ class OwnerAndManagerController extends Controller
                                     'manager_cv' => $request->input('manager_cv'),
                                     'manager_certificate' => $request->input('manager_certificate')
                                 ];
+                                $attachments = [
+                                    [
+                                        'tracking_number' => $tracking_number,
+                                        'attachment_path' => $request->input('AfisaAfyaHalmashauri'),
+                                        'attachment_type_id' => 133, // Set the appropriate attachment type ID
+                                    ],
+                                    [
+                                        'tracking_number' => $tracking_number,
+                                        'attachment_path' => $request->input('MuhandisiUjenzi'),
+                                        'attachment_type_id' => 132, // Set the appropriate attachment type ID
+                                    ],
+                                ];
+                                foreach ($attachments as $attachment) {
+                                    $attachment_path = base64pdfToFile($attachment['attachment_path']);
+                                    Attachment::updateOrCreate([
+                                        'secure_token' => Str::random(40),
+                                        'uploader_token' => auth()->user()->secure_token,
+                                        'tracking_number' => $attachment['tracking_number'],
+                                        'attachment_path' => $attachment_path,
+                                        'attachment_type_id' => $attachment['attachment_type_id'],
+                                    ], $attachment);
+                                }
 
                                 $manager = $school->manager()->updateOrCreate($manager_data);
                                 // Log::info($manager ? 'Manager saved' : 'Not Saved');

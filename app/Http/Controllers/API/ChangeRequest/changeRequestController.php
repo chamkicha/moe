@@ -554,7 +554,7 @@ class changeRequestController extends Controller
 //                    }
                 }
 
-                $response = ['statusCode' => 1, 'message' => 'Ombi la Kuamisha shule limetumwa kikamilifu'];
+                $response = ['statusCode' => 1, 'message' => 'Ombi la Kuhamisha shule limetumwa kikamilifu'];
                 return response()->json($response, 200);
 
             } elseif ($application_category->application_code == "KFS") {
