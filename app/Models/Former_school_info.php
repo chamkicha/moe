@@ -30,6 +30,7 @@ class Former_school_info extends Model
         'region_id',
         'district_id',
         'ward_id',
+        'village_id',
         'registration_structure_id',
         'curriculum_id',
         'certificate_type_id',
