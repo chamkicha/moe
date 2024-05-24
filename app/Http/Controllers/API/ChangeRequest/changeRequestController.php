@@ -28,7 +28,7 @@ class changeRequestController extends Controller
 
     public function sendChangeRequest(Request $request): JsonResponse
     {
-           Log::debug($request);
+        
 
         $validator = Validator::make($request->all(), [
             'application_category' => 'required|integer',
@@ -302,7 +302,8 @@ class changeRequestController extends Controller
                 $response = ['statusCode' => 1, 'message' => 'Ombi la Kubadili mmiliki wa shule limetumwa kikamilifu'];
                 return response()->json($response, 200);
 
-            } elseif ($application_category->application_code == "KMS") {
+            } 
+            elseif ($application_category->application_code == "KMS") {
 
                 $validator = Validator::make($request->all(), [
                     'manager_first_name' => 'required|string',
@@ -319,24 +320,22 @@ class changeRequestController extends Controller
                     'manager_cv' => 'required',
                     'manager_certificate' => 'required',
                 ]);
-
+            
                 if ($validator->fails()) {
                     return response()->json($validator->errors());
                 }
-
+            
                 $manager_email = Manager::where('manager_email', '=', $request->input('manager_email'))->first();
                 $manager_phone = Manager::where('manager_phone_number', '=', $request->input('manager_phone_number'))->first();
-
+            
                 if ($manager_email != null) {
-
                     $response = ['statusCode' => 0, 'message' => 'Barua pepe ya manager uliojaza tayari imeshatumika kwenye mfumo, tafadhali tumia barua pepe nyigine.'];
                     return response()->json($response, 200);
                 } elseif ($manager_phone != null) {
-
                     $response = ['statusCode' => 0, 'message' => 'Namba ya simu ya manager uliojaza tayari imeshatumika kwenye mfumo.'];
                     return response()->json($response, 200);
                 }
-
+            
                 $manager = Former_manager::create([
                     'establishing_school_id' => $school->id,
                     'manager_first_name' => $request->input('manager_first_name'),
@@ -353,30 +352,52 @@ class changeRequestController extends Controller
                     'manager_cv' => $request->input('manager_cv'),
                     'manager_certificate' => $request->input('manager_certificate')
                 ]);
+            
+                $trackingNumber = generateTrackingNumber($school->school_category_id);
+                Log::debug('Created trackingnumber', ['tracking_number' => $trackingNumber]);
 
+            
                 $appRequest = Application::create([
                     'secure_token' => Str::random(40),
                     'foreign_token' => $application->foreign_token,
                     'user_id' => auth()->user()->id,
                     'application_category_id' => $request->input('application_category'),
-                    'tracking_number' => generateTrackingNumber($school->school_category_id),
+                    'tracking_number' => $trackingNumber,
                     'registry_type_id' => $application->registry_type_id,
                     'folio' => $school->max_folio + 1,
                 ]);
-
+            
                 $manager->update([
-                    'tracking_number' => $appRequest->tracking_number
+                    'tracking_number' => $trackingNumber
                 ]);
-
+            
+                foreach ($request->input('attachments') as $attachment) {
+                    // Add logging to verify attachment processing
+                   
+                    $attachment_path = base64pdfToFile($attachment['attachment_path']);
+            
+                    // Verify attachment path generation
+                 
+                    $attachment = Attachment::create([
+                        'secure_token' => Str::random(40),
+                        'uploader_token' => auth()->user()->secure_token,
+                        'tracking_number' => $trackingNumber,
+                        'attachment_path' => $attachment_path,
+                        'attachment_type_id' => $attachment['attachment_type'],
+                    ]);
+            
+                    // Log the created attachment
+                    Log::debug('Created attachment', ['attachment' => $attachment]);
+                }
+            
                 if ($application->registry_type_id != 3) {
-
                     $date = Carbon::now()->format('Y-m-d*H:s:i');
                     $endDate = Carbon::now()->addDays(7)->format('Y-m-d*23:59:59');
-
+            
                     $bill_amount = Fee::where('fee_code', '=', 'CR')->where('is_active', '=', true)->first();
-
+            
                     $billInfo = [
-                        'BillId' => $appRequest->tracking_number,
+                        'BillId' => $trackingNumber,
                         'pyrid' => $school->school_name,
                         'name' => $school->school_name,
                         'phone' => $school->school_phone,
@@ -385,41 +406,25 @@ class changeRequestController extends Controller
                         'start' => str_replace("*", 'T', $date),
                         'end' => str_replace("*", 'T', $endDate),
                     ];
-                    // dd($billInfo);
-
+            
                     $bill = bill($billInfo);
-
-//                    $response = json_decode(json_encode($bill), TRUE);
-//
-//                    foreach ($response as $resp) {
-//
-//                        foreach ($resp as $data) {
-
-//                            if ($data['TrxStsCode'] != '7101') {
-//
-//                                Log::debug($response);
-//                                $response = ['message' => 'Ooooop!, kuna tatizo la mtandao wa malipo, lakin ombi lako limetumwa kikamilifu'];
-//                                return response()->json($response, 200);
-//                            }
-
-                            Application::find($appRequest->id)->update([
-                                'control_number' => controlNumber(),
-                                'amount' => $billInfo['amount'],
-                                'payment_status_id' => 2,
-                                'expire_date' => $billInfo['end']
-                            ]);
-
-                            $response = ['statusCode' => 1, 'message' => 'Ombi la Kubadili meneja wa shule limetumwa kikamilifu'];
-                            return response()->json($response, 200);
-
-//                        }
-//                    }
+            
+                    Application::find($appRequest->id)->update([
+                        'control_number' => controlNumber(),
+                        'amount' => $billInfo['amount'],
+                        'payment_status_id' => 2,
+                        'expire_date' => $billInfo['end']
+                    ]);
+            
+                    $response = ['statusCode' => 1, 'message' => 'Ombi la Kubadili meneja wa shule limetumwa kikamilifu'];
+                    return response()->json($response, 200);
                 }
-
+            
                 $response = ['statusCode' => 1, 'message' => 'Ombi la Kubadili meneja wa shule limetumwa kikamilifu'];
                 return response()->json($response, 200);
-
-            } elseif ($application_category->application_code == "KUJS") {
+            }
+            
+             elseif ($application_category->application_code == "KUJS") {
                 $validator = Validator::make($request->all(), [
                     'school_name' => 'required|string',
                 ]);
