@@ -352,9 +352,11 @@ class changeRequestController extends Controller
                     'manager_cv' => $request->input('manager_cv'),
                     'manager_certificate' => $request->input('manager_certificate')
                 ]);
+
+                
             
-                $trackingNumber = generateTrackingNumber($school->school_category_id);
-                Log::debug('Created trackingnumber', ['tracking_number' => $trackingNumber]);
+                $tracking_number = generateTrackingNumber($school->school_category_id);
+                Log::debug('Created trackingnumber', ['tracking_number' => $tracking_number]);
 
             
                 $appRequest = Application::create([
@@ -362,13 +364,13 @@ class changeRequestController extends Controller
                     'foreign_token' => $application->foreign_token,
                     'user_id' => auth()->user()->id,
                     'application_category_id' => $request->input('application_category'),
-                    'tracking_number' => $trackingNumber,
+                    'tracking_number' => $tracking_number,
                     'registry_type_id' => $application->registry_type_id,
                     'folio' => $school->max_folio + 1,
                 ]);
             
                 $manager->update([
-                    'tracking_number' => $trackingNumber
+                    'tracking_number' => $tracking_number
                 ]);
             
                 foreach ($request->input('attachments') as $attachment) {
@@ -381,7 +383,7 @@ class changeRequestController extends Controller
                     $attachment = Attachment::create([
                         'secure_token' => Str::random(40),
                         'uploader_token' => auth()->user()->secure_token,
-                        'tracking_number' => $trackingNumber,
+                        'tracking_number' => $tracking_number,
                         'attachment_path' => $attachment_path,
                         'attachment_type_id' => $attachment['attachment_type'],
                     ]);
@@ -397,7 +399,7 @@ class changeRequestController extends Controller
                     $bill_amount = Fee::where('fee_code', '=', 'CR')->where('is_active', '=', true)->first();
             
                     $billInfo = [
-                        'BillId' => $trackingNumber,
+                        'BillId' => $tracking_number,
                         'pyrid' => $school->school_name,
                         'name' => $school->school_name,
                         'phone' => $school->school_phone,
