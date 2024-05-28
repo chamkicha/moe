@@ -37,7 +37,7 @@ class governmentSchoolEstablishmentController extends Controller
             'school_opening_date' => 'required|date',
             'number_of_students' => 'required|integer',
             'number_of_teachers' => 'required|integer',
-            'teacher_information' => 'required',
+         
             'certificate_type' => 'required|integer',
             'school_gender' => 'required|integer',
             'disabled' => 'required',
@@ -70,7 +70,7 @@ class governmentSchoolEstablishmentController extends Controller
             'po_box' => $request->input('po_box'),
             'number_of_students' => $request->input('number_of_students'),
             'number_of_teachers' => $request->input('number_of_teachers'),
-            'teacher_information' => $request->input('teacher_information'),
+         
             'certificate_type_id' => $request->input('certificate_type'),
             'school_gender_type_id' => $request->input('school_gender'),
             'is_for_disabled' => $request->input('disabled'),

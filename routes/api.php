@@ -57,7 +57,7 @@ Route::controller(MetaDataController::class)->group(function (){
     Route::get('languages','languages');
     Route::get('school-specialization','schoolSpecialization');
     // Route::get('institute-attachments/{id?}','instituteAttachments');
-    Route::get('institute-attachments/{registry_type_id}/{registration_structure_id?}','instituteAttachments');
+    Route::get('institute-attachments/{registry_type_id}/{registration_structure_id?}/{application_category_id?}','instituteAttachments');
     Route::get('attachments/types/{id?}','attachmentsTypes');
 
     Route::get('ownership_types','ownership_types');

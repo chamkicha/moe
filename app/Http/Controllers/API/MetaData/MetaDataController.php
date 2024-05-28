@@ -239,6 +239,8 @@ class MetaDataController extends Controller
     {
         $attachment_types = Attachment_type::whereStatusId(1)
                 ->where('application_category_id', 1)
+                ->where('is_backend', 0)
+                ->where('status_id',1)
                 ->whereIn('registry_type_id' ,  [$registry_type_id])
                 ->where(function($query) use($registration_structure_id){
                         if($registration_structure_id){
@@ -264,16 +266,17 @@ class MetaDataController extends Controller
 
     public function attachmentsTypes($id): JsonResponse
     {
-
         $attachment_types = Attachment_type::where('application_category_id', '=', $id)
+            ->where('status_id', 1)
+            ->where('is_backend', 0)
             ->select('id', 'secure_token', 'attachment_name')
             ->get();
-
+    
         $response = ['attachment_types' => $attachment_types];
-
+    
         return response()->json($response, 200);
     }
-
+    
     public function addInstituteAttachments(Request $request): JsonResponse
     {
 

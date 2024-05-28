@@ -999,30 +999,24 @@ class schoolEstablishmentController extends Controller
         return response()->json($response,200);
     }
 
-    public function attachmentType($application_category,$registry_type_id,$tracking_number): JsonResponse
-    {
+    public function attachmentType($application_category, $registry_type_id, $tracking_number): JsonResponse
+{
+    $establishment = Establishing_school::where('tracking_number', $tracking_number)->first();
 
+    $registration_structure_id = $establishment->registration_structure_id;
+    $attachment_types = Attachment_type::
+        leftJoin('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
+        ->where('attachment_types.status_id', 1)
+        ->where('attachment_types.is_backend', 0)
+        ->where('application_categories.id', $application_category)
+        ->whereIn('attachment_types.registry_type_id', [0, 1])
+        ->where(function ($query) use ($registration_structure_id) {
+            $query->whereIn('attachment_types.registration_structure_id', [0, $registration_structure_id]);
+        })
+        ->get();
 
-        $establishment = Establishing_school::where('tracking_number',$tracking_number)->first();
-
-
-        $registration_structure_id = $establishment->registration_structure_id;
-        $attachment_types = Attachment_type::
-                  leftJoin('application_categories', 'application_categories.id', '=', 'attachment_types.application_category_id')
-                // ->leftJoin('registry_types', 'attachment_types.registry_type_id', '=', 'registry_types.id')
-                ->whereStatusId(1)
-                ->where('application_category_id', $application_category)
-                ->whereIn('registry_type_id' ,  [0,1])
-                ->where(function($query) use($registration_structure_id){
-                        $query->whereIn('registration_structure_id' , [0 , $registration_structure_id ]);
-                })
-                ->get();
-                // \Log::info('Idadi = '.count($attachment_types).' rs_id = '.$registration_structure_id.' tr ='.$tracking_number );
-                // \Log::info(json_encode($attachment_types));
-                $response = ['statusCode' => 1,'attachment_types' => $attachment_types];
-                return response()->json($response, 200);
-
-        // dd($establishment);
+    $response = ['statusCode' => 1, 'attachment_types' => $attachment_types];
+    return response()->json($response, 200);    // dd($establishment);
         //  \Log::info($establishment->registration_structure_id);
         // if($establishment->registration_structure_id == 2){
         //     $attachment_types = Attachment_type::select('attachment_types.id as id', 'app_name', 'file_size', 'file_format', 'attachment_name', 'registry')
