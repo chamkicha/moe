@@ -32,7 +32,7 @@ class schoolEstablishmentController extends Controller
 {
     public function establishSchool(Request $request)
     {
-           Log::debug($request);
+        Log::info('Request received', ['request' => $request->all()]);
         //    dd($request);
     //  try{
         $validator = Validator::make($request->all(), [
@@ -170,13 +170,15 @@ class schoolEstablishmentController extends Controller
             ]);
 
 
-
+            $trackingNumber = generateTrackingNumber($request->input('school_category'));
+            Log::info('Generated tracking number', ['tracking_number' => $trackingNumber]);
             $applicaion_data = [
                 'secure_token' => Str::random(40),
                 'user_id' => auth()->user()->id,
                 'application_category_id' => $request->input('application_category'),
                 'registry_type_id' => $request->input('registry_type'),
                 'tracking_number' => generateTrackingNumber($request->input('school_category')),
+                
                 'folio' => 1
             ];
 

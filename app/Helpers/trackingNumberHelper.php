@@ -29,28 +29,30 @@ if (!function_exists('base64pdfToFile')) {
     }
     }
 
-function generateTrackingNumber($schoolCategory){
+    function generateTrackingNumber($schoolCategory){
 
-    $category = School_category::find($schoolCategory);
-
-    if ($category->category == 'Awali pekee'){
-
-        return 'EA' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
+        try {
+            $category = School_category::findOrFail($schoolCategory);
+    
+            if ($category->category == 'Awali'){
+                return 'EA' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
+            }
+            elseif ($category->category == 'Awali na Msingi'){
+                return 'EM' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
+            }
+            elseif ($category->category == 'Sekondari'){
+                return 'ES' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
+            }
+            elseif ($category->category == 'Chuo cha ualimu'){
+                return 'EC' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
+            }
+        } catch (\Exception $e) {
+            // Log any errors
+            Log::error('Error generating tracking number: ' . $e->getMessage());
+            return null;
+        }
     }
-    elseif ($category->category == 'Awali na Msingi'){
-
-        return 'EM' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
-    }
-    elseif ($category->category == 'Sekondari'){
-
-        return 'ES' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
-    }
-    elseif ($category->category == 'Chuo cha ualimu'){
-
-        return 'EC' .'-'.Carbon::today()->format('Ymd').'-'. mt_rand(100,999);
-    }
-}
-
+    
 function generateFileNumber($registry,$school_category){
 
     $category = School_category::find($school_category);
