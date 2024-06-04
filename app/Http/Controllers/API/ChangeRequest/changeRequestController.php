@@ -833,6 +833,7 @@ class changeRequestController extends Controller
 
     public function showChangeRequestApplications(): JsonResponse
     {
+   
 
         $change_requests = Application::with([
             'former_school' => function ($query) {
@@ -850,6 +851,42 @@ class changeRequestController extends Controller
                     }
                 ])->select('id', 'tracking_number', 'establishing_school_id', 'school_category_id', 'school_name', 'stream', 'curriculum_id');
             },
+            'former_combination' => function ($query) {
+                $query->with([
+                    'school' => function ($qry) {
+                        $qry->with([
+                            'category' => function ($query) {
+                                $query->select('id', 'category');
+                            }
+                        ])
+                        ->select('id', 'school_category_id', 'school_name', 'stream', 'curriculum_id','file_number','school_folio');
+                    },
+                ])->select('id', 'tracking_number', 'establishing_school_id');
+            },
+            'former_manager' => function ($query) {
+                $query->with([
+                    'school' => function ($qry) {
+                        $qry->with([
+                            'category' => function ($query) {
+                                $query->select('id', 'category');
+                            }
+                        ])
+                        ->select('id', 'school_category_id', 'school_name', 'stream', 'curriculum_id','file_number','school_folio');
+                    },
+                ])->select('id', 'tracking_number', 'establishing_school_id');
+            },
+            'former_owner' => function ($query) {
+                $query->with([
+                    'school' => function ($qry) {
+                        $qry->with([
+                            'category' => function ($query) {
+                                $query->select('id', 'category');
+                            }
+                        ])
+                        ->select('id', 'school_category_id', 'school_name', 'stream', 'curriculum_id','file_number','school_folio');
+                    },
+                ])->select('id', 'tracking_number', 'establishing_school_id');
+            },
             'payment_status' => function ($query) {
                 $query->select('id', 'status_code', 'status');
             },
@@ -862,7 +899,7 @@ class changeRequestController extends Controller
             ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved', 'control_number', 'payment_status_id', 'amount', 'expire_date')
             ->orderBy('id', 'DESC')
             ->get();
-
+      
         $response = ['change_requests' => $change_requests];
         return response()->json($response, 200);
     }
@@ -931,7 +968,7 @@ class changeRequestController extends Controller
             },
         ])
             ->where('tracking_number', '=', $tracking_number)
-            ->select('id', 'secure_token', 'registry_type_id', 'foreign_token', 'application_category_id', 'tracking_number', 'is_approved', 'control_number', 'payment_status_id', 'amount', 'expire_date','approved_at','folio')
+            ->select('id', 'secure_token', 'registry_type_id', 'school_name','foreign_token', 'application_category_id', 'tracking_number', 'is_approved', 'control_number', 'payment_status_id', 'amount', 'expire_date','approved_at','folio')
             ->first();
 
         $response = ['change_requests' => $change_requests];
